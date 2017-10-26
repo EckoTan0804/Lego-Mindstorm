@@ -9,15 +9,16 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.navigation.DifferentialPilot;
+import mission.MissionMenu;
 
 public class Robot implements Runnable {
 
 	// Date need to be measured and adjusted
-	private static final double WHEEL_DIAMETER = 20d; 
-	private static final double TRACK_WIDTH = 20d; 
+	private static final double WHEEL_DIAMETER = 20d;
+	private static final double TRACK_WIDTH = 20d;
 	private static final Port LEFT_MOTOR = MotorPort.A;
 	private static final Port RIGHT_MOTOR = MotorPort.D;
-	
+
 	private static final Port COLOR_SENSOR = SensorPort.S1;
 	private static final Port TOUCH_SENSOR_1 = SensorPort.S2;
 	private static final Port TOUCH_SENSOR_2 = SensorPort.S3;
@@ -25,34 +26,50 @@ public class Robot implements Runnable {
 
 	private DifferentialPilot pilot;
 	private SensorThread sensors;
+	private MissionMenu missionMenu;
 
 	public Robot() {
-		
+
 		EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LEFT_MOTOR);
 		EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(RIGHT_MOTOR);
 		this.pilot = new DifferentialPilot(WHEEL_DIAMETER, TRACK_WIDTH, leftMotor, rightMotor, false);
-		
+
 		EV3ColorSensor colorS = new EV3ColorSensor(COLOR_SENSOR);
 		EV3TouchSensor touchS1 = new EV3TouchSensor(TOUCH_SENSOR_1);
 		EV3TouchSensor touchS2 = new EV3TouchSensor(TOUCH_SENSOR_2);
 		EV3UltrasonicSensor ultraS = new EV3UltrasonicSensor(ULTRASONIC_SENSOR);
-		
+
 		SingleValueSensorWrapper color = new SingleValueSensorWrapper(colorS, "Red");
 		SingleValueSensorWrapper touch1 = new SingleValueSensorWrapper(touchS1, "Touch");
 		SingleValueSensorWrapper touch2 = new SingleValueSensorWrapper(touchS2, "Touch");
 		SingleValueSensorWrapper distance = new SingleValueSensorWrapper(ultraS, "Distance");
-		
+
 		this.sensors = new SensorThread(color, touch1, touch2, distance);
+
 	}
-	
+
 	public void mainLoop() throws InterruptedException {
 		new Thread(this.sensors).start();
 		new Thread(this).start(); // start the program
 		Button.LEDPattern(1); // green light
-		
-		while (Button.ENTER.isUp()) { // manual stop the program
-			// do sth
-			
+
+		while (Button.ENTER.isUp()) { // manual stop the program when Button "Enter" is pressed
+			// choose mission-routine from mission menu
+			switch(this.missionMenu.select()) {
+			case MissionMenu.MENU_ITEM_LINE_FOLLOWING :
+				// line following routine will be executed
+				break;
+			case MissionMenu.MENU_ITEM_LABYRINTH:
+				// labyrinth routine will be executed
+				break;
+			case MissionMenu.MENU_ITEM_OBSTACLE_SHIFTING:
+				// obstacle shifting routine will be executed
+				break;
+			default :
+				// bridge routine will be executed
+				break;
+			}
+
 			this.sleep(20);
 		}
 		System.exit(0);
@@ -129,15 +146,16 @@ public class Robot implements Runnable {
 	private void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
-		} catch(InterruptedException e) {
+		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
 	}
 
 	@Override
 	public void run() {
-		// TODO Auto-generated method stub
-		
+		// show mission menu on the brick's screen
+		this.missionMenu = new MissionMenu();
+
 	}
 
 }
