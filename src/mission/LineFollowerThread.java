@@ -2,13 +2,13 @@ package mission;
 
 import ev3Robot.Robot;
 
-public class LineFollower implements Runnable{
+public class LineFollowerThread implements Runnable{
 	
 	private static final float THRESHOLD = 0.5f; // TODO: need to be measured and adjusted
 	
 	private Robot robot;
 
-	public LineFollower(Robot robot) {
+	public LineFollowerThread(Robot robot) {
 		super();
 		this.robot = robot;
 	}
