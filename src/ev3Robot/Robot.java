@@ -9,6 +9,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.navigation.DifferentialPilot;
+import mission.LineFollowerThread;
 import mission.MissionMenu;
 
 public class Robot implements Runnable {
@@ -59,6 +60,9 @@ public class Robot implements Runnable {
 			switch (this.missionMenu.select()) {
 			case MissionMenu.MENU_ITEM_LINE_FOLLOWING:
 				// line following routine will be executed
+				Thread lineFollowerThread = new Thread(new LineFollowerThread(this));
+				lineFollowerThread.start();
+				lineFollowerThread.join();
 				break;
 			case MissionMenu.MENU_ITEM_LABYRINTH:
 				// labyrinth routine will be executed
