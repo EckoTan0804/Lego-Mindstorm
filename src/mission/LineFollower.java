@@ -20,7 +20,7 @@ public class LineFollower implements Runnable{
 	
 	private void lineFollowing() {
 		while(true) {
-			if (this.robot.getSensorManager().getReflectedLightIntensity() < THRESHOLD) {
+			if (this.robot.getSensors().getColor() < THRESHOLD) {
 				// turn left
 				this.robot.travelArc(1, 2);
 			} else {
