@@ -35,4 +35,38 @@ public class SensorThread implements Runnable {
 		}
 	}
 
+	public float getTouch1() {
+		return touch1;
+	}
+
+	public void setTouch1(float touch1) {
+		this.touch1 = touch1;
+	}
+
+	public float getTouch2() {
+		return touch2;
+	}
+
+	public void setTouch2(float touch2) {
+		this.touch2 = touch2;
+	}
+
+	public float getColor() {
+		return color;
+	}
+
+	public void setColor(float color) {
+		this.color = color;
+	}
+
+	public float getDistance() {
+		return distance;
+	}
+
+	public void setDistance(float distance) {
+		this.distance = distance;
+	}
+	
+	
+
 }

@@ -54,9 +54,10 @@ public class Robot implements Runnable {
 		Button.LEDPattern(1); // green light
 
 		while (Button.ENTER.isUp()) { // manual stop the program when Button "Enter" is pressed
+			
 			// choose mission-routine from mission menu
-			switch(this.missionMenu.select()) {
-			case MissionMenu.MENU_ITEM_LINE_FOLLOWING :
+			switch (this.missionMenu.select()) {
+			case MissionMenu.MENU_ITEM_LINE_FOLLOWING:
 				// line following routine will be executed
 				break;
 			case MissionMenu.MENU_ITEM_LABYRINTH:
@@ -65,7 +66,7 @@ public class Robot implements Runnable {
 			case MissionMenu.MENU_ITEM_OBSTACLE_SHIFTING:
 				// obstacle shifting routine will be executed
 				break;
-			default :
+			default:
 				// bridge routine will be executed
 				break;
 			}
@@ -157,5 +158,23 @@ public class Robot implements Runnable {
 		this.missionMenu = new MissionMenu();
 
 	}
+
+	public SensorThread getSensors() {
+		return sensors;
+	}
+
+	public void setSensors(SensorThread sensors) {
+		this.sensors = sensors;
+	}
+
+	public MissionMenu getMissionMenu() {
+		return missionMenu;
+	}
+
+	public void setMissionMenu(MissionMenu missionMenu) {
+		this.missionMenu = missionMenu;
+	}
+	
+	
 
 }
