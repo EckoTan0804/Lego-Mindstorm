@@ -30,11 +30,14 @@ public class Robot implements Runnable {
 	private DifferentialPilot pilot;
 	private SensorThread sensors;
 	private MissionMenu missionMenu;
+	
+	private EV3LargeRegulatedMotor leftMotor;
+	private EV3LargeRegulatedMotor rightMotor;
 
 	public Robot() {
 
-		EV3LargeRegulatedMotor leftMotor = new EV3LargeRegulatedMotor(LEFT_MOTOR);
-		EV3LargeRegulatedMotor rightMotor = new EV3LargeRegulatedMotor(RIGHT_MOTOR);
+		this.leftMotor = new EV3LargeRegulatedMotor(LEFT_MOTOR);
+		this.rightMotor = new EV3LargeRegulatedMotor(RIGHT_MOTOR);
 		this.pilot = new DifferentialPilot(WHEEL_DIAMETER, TRACK_WIDTH, leftMotor, rightMotor, false);
 
 		EV3ColorSensor colorS = new EV3ColorSensor(COLOR_SENSOR);
@@ -160,14 +163,6 @@ public class Robot implements Runnable {
 		this.pilot.rotate(angle, true);
 	}
 
-	public DifferentialPilot getPilot() {
-		return pilot;
-	}
-
-	public void setPilot(DifferentialPilot pilot) {
-		this.pilot = pilot;
-	}
-
 	private void sleep(int millis) {
 		try {
 			Thread.sleep(millis);
@@ -175,7 +170,20 @@ public class Robot implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
+	
+	public void turnLeft(float turn) {
+		this.leftMotor.setSpeed((float)(this.pilot.getTravelSpeed() - turn));
+		this.rightMotor.setSpeed((float)(this.pilot.getTravelSpeed() + turn)); 
+		this.pilot.forward();
+	}
+	
+	
+	public void turnRight(float turn) {
+		this.leftMotor.setSpeed((float)(this.pilot.getTravelSpeed() + turn));
+		this.rightMotor.setSpeed((float)(this.pilot.getTravelSpeed() - turn)); 
+		this.pilot.forward();
+	}
+	
 	@Override
 	public void run() {
 		// show mission menu on the brick's screen
@@ -197,6 +205,14 @@ public class Robot implements Runnable {
 
 	public void setMissionMenu(MissionMenu missionMenu) {
 		this.missionMenu = missionMenu;
+	}
+	
+	public DifferentialPilot getPilot() {
+		return pilot;
+	}
+
+	public void setPilot(DifferentialPilot pilot) {
+		this.pilot = pilot;
 	}
 	
 	
