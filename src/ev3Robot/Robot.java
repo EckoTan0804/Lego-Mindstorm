@@ -1,6 +1,7 @@
 package ev3Robot;
 
 import lejos.hardware.Button;
+import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
@@ -10,6 +11,7 @@ import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.navigation.DifferentialPilot;
 import mission.LineFollowerThread;
+import mission.Mission;
 import mission.MissionMenu;
 
 public class Robot implements Runnable {
@@ -58,19 +60,37 @@ public class Robot implements Runnable {
 			
 			// choose mission-routine from mission menu
 			switch (this.missionMenu.select()) {
+			
 			case MissionMenu.MENU_ITEM_LINE_FOLLOWING:
+				// show "Line following" on the display
+				LCD.clear();
+				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
+				
 				// line following routine will be executed
 				Thread lineFollowerThread = new Thread(new LineFollowerThread(this));
 				lineFollowerThread.start();
 				lineFollowerThread.join();
 				break;
+				
 			case MissionMenu.MENU_ITEM_LABYRINTH:
+				// show "Labyrinth" on the display
+				LCD.clear();
+				LCD.drawString(Mission.LABYRINTH.getMission(), 0, 0);
+				
 				// labyrinth routine will be executed
 				break;
+				
 			case MissionMenu.MENU_ITEM_OBSTACLE_SHIFTING:
+				// show "Obstacle shifting" on the display
+				LCD.clear();
+				LCD.drawString(Mission.OBSTACLE_SHIFTING.getMission(), 0, 0);
 				// obstacle shifting routine will be executed
 				break;
+				
 			default:
+				// show "Bridge" on the display
+				LCD.clear();
+				LCD.drawString(Mission.BRIDGE.getMission(), 0, 0);
 				// bridge routine will be executed
 				break;
 			}
