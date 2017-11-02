@@ -102,6 +102,13 @@ public class Robot implements Runnable {
 		}
 		System.exit(0);
 	}
+	
+	@Override
+	public void run() {
+		// show mission menu on the brick's screen
+		this.missionMenu = new MissionMenu();
+
+	}
 
 	public void goForward() {
 		this.pilot.forward();
@@ -184,12 +191,13 @@ public class Robot implements Runnable {
 		this.pilot.forward();
 	}
 	
-	@Override
-	public void run() {
-		// show mission menu on the brick's screen
-		this.missionMenu = new MissionMenu();
-
+	public void changeMotorSpeed(float turn) {
+		this.leftMotor.setSpeed((float)(this.pilot.getTravelSpeed() + turn));
+		this.rightMotor.setSpeed((float)(this.pilot.getTravelSpeed() - turn));
 	}
+	
+	
+	// ============= setters and getters ========================
 
 	public SensorThread getSensors() {
 		return sensors;
