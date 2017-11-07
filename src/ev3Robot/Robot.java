@@ -60,52 +60,7 @@ public class Robot implements Runnable {
 //		new Thread(this.sensors).start();
 		new Thread(this).start(); // start the program
 		Button.LEDPattern(1); // green light
-
-		while (Button.ESCAPE.isUp()) { // manual stop the program when Button "Escape" is pressed
-			
-			LCD.clear();
-			
-			// choose mission-routine from mission menu
-			switch (this.missionMenu.select()) {
-
-			case MissionMenu.MENU_ITEM_LINE_FOLLOWING:
-				// show "Line following" on the display
-				LCD.clear();
-				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
-
-				// line following routine will be executed
-				Thread lineFollowerThread = new Thread(new LineFollowerThread(this));
-				//lineFollowerThread.start();
-				//Thread.sleep(20);
-				//lineFollowerThread.join();
-				lineFollowerThread.run();
-				break;
-
-			case MissionMenu.MENU_ITEM_LABYRINTH:
-				// show "Labyrinth" on the display
-				LCD.clear();
-				LCD.drawString(Mission.LABYRINTH.getMission(), 0, 0);
-
-				// labyrinth routine will be executed
-				break;
-
-			case MissionMenu.MENU_ITEM_OBSTACLE_SHIFTING:
-				// show "Obstacle shifting" on the display
-				LCD.clear();
-				LCD.drawString(Mission.OBSTACLE_SHIFTING.getMission(), 0, 0);
-				// obstacle shifting routine will be executed
-				break;
-
-			default:
-				// show "Bridge" on the display
-				LCD.clear();
-				LCD.drawString(Mission.BRIDGE.getMission(), 0, 0);
-				// bridge routine will be executed
-				break;
-			}
-
-			this.sleep(20);
-		}
+		this.missionMenu.startGUI(this);
 		System.exit(0);
 	}
 
@@ -120,12 +75,27 @@ public class Robot implements Runnable {
 		this.pilot.setTravelSpeed(speed);
 	}
 
-	public void goForward() {
+	public void goForwardWithPilot() {
 		this.pilot.forward();
 	}
 
-	public void goBackward() {
+	public void goBackwardWithPilot() {
 		this.pilot.backward();
+	}
+	
+	public void goForwardWithMotors() {
+		this.leftMotor.forward();
+		this.rightMotor.forward();
+	}
+	
+	public void goBackwardWithMotors() {
+		this.leftMotor.backward();
+		this.rightMotor.backward();
+	}
+	
+	public void setMotorSpeed(float leftMotorTargetSpeed, float rightMotorTargetSpeed) {
+		this.leftMotor.setSpeed(leftMotorTargetSpeed);
+		this.rightMotor.setSpeed(rightMotorTargetSpeed);
 	}
 
 	/**
@@ -188,34 +158,23 @@ public class Robot implements Runnable {
 		}
 	}
 
-//	public void turnLeft(float turn) {
-//		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
-//		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
-//		this.pilot.forward();
-//	}
-//
-//	public void turnRight(float turn) {
+
+//	/**
+//	 * Change the motors' speed in order to make the robot (hopefully) move along
+//	 * the line.
+//	 * <p>
+//	 * This method is specifically for mission Line-Following.
+//	 * </p>
+//	 * 
+//	 * @param turn
+//	 *            calculated by using proportional, integral and derivative
+//	 *            constants, <br>
+//	 * 			see {@link mission.LineFollowerThread}</br>
+//	 */
+//	public void changeMotorSpeed(float turn) {
 //		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
 //		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
-//		this.pilot.forward();
 //	}
-
-	/**
-	 * Change the motors' speed in order to make the robot (hopefully) move along
-	 * the line.
-	 * <p>
-	 * This method is specifically for mission Line-Following.
-	 * </p>
-	 * 
-	 * @param turn
-	 *            calculated by using proportional, integral and derivative
-	 *            constants, <br>
-	 * 			see {@link mission.LineFollowerThread}</br>
-	 */
-	public void changeMotorSpeed(float turn) {
-		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
-		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
-	}
 
 	// ============= setters and getters ========================
 
