@@ -1,4 +1,4 @@
-package ev3Robot;
+package sensor;
 
 import lejos.hardware.sensor.BaseSensor;
 import lejos.hardware.sensor.SensorMode;

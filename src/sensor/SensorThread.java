@@ -1,4 +1,4 @@
-package ev3Robot;
+package sensor;
 
 public class SensorThread implements Runnable {
 	
