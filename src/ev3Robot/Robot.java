@@ -17,8 +17,8 @@ import mission.MissionMenu;
 public class Robot implements Runnable {
 
 	// Date need to be measured and adjusted
-	private static final double WHEEL_DIAMETER = 20d;
-	private static final double TRACK_WIDTH = 20d;
+	private static final double WHEEL_DIAMETER = 3.2d; // unit:cm
+	private static final double TRACK_WIDTH = 11d; // unit: cm
 	private static final Port LEFT_MOTOR = MotorPort.A;
 	private static final Port RIGHT_MOTOR = MotorPort.D;
 
@@ -51,16 +51,20 @@ public class Robot implements Runnable {
 		SingleValueSensorWrapper distance = new SingleValueSensorWrapper(ultraS, "Distance");
 
 		this.sensors = new SensorThread(color, touch1, touch2, distance);
+		this.missionMenu = new MissionMenu();
+		new Thread(this.sensors).start();
 
 	}
 
 	public void mainLoop() throws InterruptedException {
-		new Thread(this.sensors).start();
+//		new Thread(this.sensors).start();
 		new Thread(this).start(); // start the program
 		Button.LEDPattern(1); // green light
 
-		while (Button.ENTER.isUp()) { // manual stop the program when Button "Enter" is pressed
-
+		while (Button.ESCAPE.isUp()) { // manual stop the program when Button "Escape" is pressed
+			
+			LCD.clear();
+			
 			// choose mission-routine from mission menu
 			switch (this.missionMenu.select()) {
 
@@ -71,8 +75,10 @@ public class Robot implements Runnable {
 
 				// line following routine will be executed
 				Thread lineFollowerThread = new Thread(new LineFollowerThread(this));
-				lineFollowerThread.start();
-				lineFollowerThread.join();
+				//lineFollowerThread.start();
+				//Thread.sleep(20);
+				//lineFollowerThread.join();
+				lineFollowerThread.run();
 				break;
 
 			case MissionMenu.MENU_ITEM_LABYRINTH:
@@ -106,8 +112,12 @@ public class Robot implements Runnable {
 	@Override
 	public void run() {
 		// show mission menu on the brick's screen
-		this.missionMenu = new MissionMenu();
+//		this.missionMenu = new MissionMenu();
 
+	}
+	
+	public void setSpeed(double speed) {
+		this.pilot.setTravelSpeed(speed);
 	}
 
 	public void goForward() {
@@ -127,7 +137,7 @@ public class Robot implements Runnable {
 	 *            moves backward.
 	 */
 	public void travel(double distance) {
-		this.pilot.travel(distance, true);
+		this.pilot.travel(distance);
 	}
 
 	/**
@@ -178,17 +188,17 @@ public class Robot implements Runnable {
 		}
 	}
 
-	public void turnLeft(float turn) {
-		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
-		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
-		this.pilot.forward();
-	}
-
-	public void turnRight(float turn) {
-		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
-		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
-		this.pilot.forward();
-	}
+//	public void turnLeft(float turn) {
+//		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
+//		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
+//		this.pilot.forward();
+//	}
+//
+//	public void turnRight(float turn) {
+//		this.leftMotor.setSpeed((float) (this.pilot.getTravelSpeed() + turn));
+//		this.rightMotor.setSpeed((float) (this.pilot.getTravelSpeed() - turn));
+//		this.pilot.forward();
+//	}
 
 	/**
 	 * Change the motors' speed in order to make the robot (hopefully) move along
@@ -232,5 +242,23 @@ public class Robot implements Runnable {
 	public void setPilot(DifferentialPilot pilot) {
 		this.pilot = pilot;
 	}
+
+	public EV3LargeRegulatedMotor getLeftMotor() {
+		return leftMotor;
+	}
+
+	public void setLeftMotor(EV3LargeRegulatedMotor leftMotor) {
+		this.leftMotor = leftMotor;
+	}
+
+	public EV3LargeRegulatedMotor getRightMotor() {
+		return rightMotor;
+	}
+
+	public void setRightMotor(EV3LargeRegulatedMotor rightMotor) {
+		this.rightMotor = rightMotor;
+	}
+	
+	
 
 }

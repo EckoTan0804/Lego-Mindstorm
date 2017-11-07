@@ -2,18 +2,21 @@ package mission;
 
 import ev3Robot.Robot;
 import lejos.hardware.Button;
+import lejos.hardware.lcd.LCD;
 
 /**
- * For mission Line-Following a PID-controller will be used. 
- * <p>Reference: "PID Controller For Lego Mindstorms Robots"</p>
+ * For mission Line-Following a PID-controller will be used.
+ * <p>
+ * Reference: "PID Controller For Lego Mindstorms Robots"
+ * </p>
  * 
  * @author EckoTan
  *
  */
 public class LineFollowerThread implements Runnable {
 
-	private final float BLACK = 0f;
-	private final float WHITE = 1f;
+	private final float BLACK = 0.05f;
+	private final float WHITE = 0.33f;
 
 	private float offset = WHITE - BLACK;
 
@@ -22,13 +25,13 @@ public class LineFollowerThread implements Runnable {
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = 10f;
+	private final float Kp = 200f;
 
 	/*
-	 * the constant for the Integral controller 
+	 * the constant for the Integral controller
 	 */
 	private final float Ki = 1f;
-	
+
 	/*
 	 * the constant for the derivative controller
 	 */
@@ -53,20 +56,24 @@ public class LineFollowerThread implements Runnable {
 
 	@Override
 	public void run() {
+		LCD.drawString("HELLO", 0, 1);
 		this.lineFollowing();
 	}
 
 	private void lineFollowing() {
-		while (Button.ENTER.isUp()) {
+//		this.robot.
+		this.robot.goForward();
+		while (Button.LEFT.isUp()) {
 			float sampleVal = this.robot.getSensors().getColor();
 			float error = sampleVal - offset;
 			integral = integral + error;
 			derivative = error - lastError;
 			float turn = Kp * error + Ki * integral + Kd * derivative;
 			this.robot.changeMotorSpeed(turn);
-			this.robot.goForward();
+//			this.robot.goForward();
 			this.lastError = error;
 		}
+
 	}
 
 }
