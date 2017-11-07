@@ -96,5 +96,21 @@ public class Drive {
 	public void rotate(double angle) {
 		this.pilot.rotate(angle, true);
 	}
+	
+	public void turnLeft(double angle) throws IllegalArgumentException {
+		if (angle < 0 || angle > 180) {
+			throw new IllegalArgumentException();
+		}
+		this.rotate(angle);
+	}
+	
+	public void turnRight(double angle) throws IllegalArgumentException {
+		if (angle < 0 || angle > 180) {
+			throw new IllegalArgumentException();
+		}
+		this.rotate(-angle);
+	}
+	
+	
 
 }
