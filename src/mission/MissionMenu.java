@@ -1,5 +1,6 @@
 package mission;
 
+import ev3Robot.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.utility.TextMenu;
@@ -22,7 +23,7 @@ public class MissionMenu extends TextMenu {
 		super(missions);
 	}
 
-	public void startGUI(Robot robot) {
+	public void startGUI(Robot robot) throws InterruptedException {
 		
 		while (Button.ESCAPE.isUp()) { // manual stop the program when Button "Escape" is pressed
 
@@ -67,7 +68,7 @@ public class MissionMenu extends TextMenu {
 				break;
 			}
 
-			this.sleep(20);
+			Thread.sleep(20);
 		}
 	}
 

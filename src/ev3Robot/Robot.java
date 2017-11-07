@@ -13,6 +13,8 @@ import lejos.robotics.navigation.DifferentialPilot;
 import mission.LineFollowerThread;
 import mission.Mission;
 import mission.MissionMenu;
+import sensor.SensorThread;
+import sensor.SingleValueSensorWrapper;
 
 public class Robot implements Runnable {
 
