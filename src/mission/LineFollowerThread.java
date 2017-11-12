@@ -2,6 +2,7 @@ package mission;
 
 import ev3Robot.Robot;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 
 /**
  * For mission Line-Following a PID-controller will be used.
@@ -59,11 +60,13 @@ public class LineFollowerThread implements Runnable {
 	}
 
 	private void lineFollowing() {
+		
+		Sound.beep();
 
 		this.robot.getDrive().setMotorSpeed(Tp, Tp);
 		this.robot.getDrive().goForwardWithMotors();
 
-		while (Button.LEFT.isUp()) {
+		while (Button.LEFT.isUp()) { // stop the routine and back to the main menu if LEFT is pressed
 
 			// get the sample value measured by color sensor
 			float sampleVal = this.robot.getSensors().getColor();
@@ -81,7 +84,7 @@ public class LineFollowerThread implements Runnable {
 
 			// robot goes forward
 			this.robot.getDrive().goForwardWithMotors();
-			
+
 			// update error
 			this.lastError = error;
 
@@ -91,6 +94,8 @@ public class LineFollowerThread implements Runnable {
 				e.printStackTrace();
 			}
 		}
+		
+		Sound.beepSequence();
 
 	}
 

@@ -2,6 +2,7 @@ package mission;
 
 import ev3Robot.Robot;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.utility.TextMenu;
 
@@ -24,6 +25,8 @@ public class MissionMenu extends TextMenu {
 	}
 
 	public void startGUI(Robot robot) throws InterruptedException {
+		
+		Sound.beepSequenceUp();
 		
 		while (Button.ESCAPE.isUp()) { // manual stop the program when Button "Escape" is pressed
 
