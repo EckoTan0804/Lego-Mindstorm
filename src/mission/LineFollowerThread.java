@@ -1,5 +1,6 @@
 package mission;
 
+import ev3Robot.Drive;
 import ev3Robot.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
@@ -41,17 +42,26 @@ public class LineFollowerThread implements Runnable {
 	/*
 	 * the constant for the derivative controller
 	 */
-	private final float Kd = 100f;
+	private final float Kd = 50f;
+
+	// /*
+	// * Target power level, power level of both motors when the robot is supposed
+	// to
+	// * go straight ahead, controls how fast the robot is moving along the line
+	// */
+	// private final float Tp = 400;
 
 	private float integral = 0f;
 	private float lastError = 0f;
 	private float derivative = 0f;
 
 	private Robot robot;
+	private Drive drive;
 
 	public LineFollowerThread(Robot robot) {
 		super();
 		this.robot = robot;
+		this.drive = robot.getDrive();
 	}
 
 	@Override
@@ -60,7 +70,7 @@ public class LineFollowerThread implements Runnable {
 	}
 
 	private void lineFollowing() {
-		
+
 		Sound.beep();
 
 		this.robot.getDrive().setMotorSpeed(Tp, Tp);
@@ -69,34 +79,46 @@ public class LineFollowerThread implements Runnable {
 		while (Button.LEFT.isUp()) { // stop the routine and back to the main menu if LEFT is pressed
 
 			// get the sample value measured by color sensor
-			float sampleVal = this.robot.getSensors().getColor();
+			// this.robot.
+			// this.drive.goForwardWithMotors();
+			while (Button.LEFT.isUp()) {
 
-			// calculate turn, based on this value
-			float error = sampleVal - offset;
-			integral = integral + error;
-			derivative = error - lastError;
-			float turn = Kp * error + Ki * integral + Kd * derivative;
+				float sampleVal = this.robot.getSensors().getColor();
 
-			// adjust the power of left and right motors in order to make the robot follow
-			// the line
-			this.robot.getDrive().setMotorSpeed(this.robot.getLeftMotor().getTachoCount() - turn,
-					this.robot.getRightMotor().getTachoCount() + turn);
+				// calculate turn, based on this value
+				float error = sampleVal - offset;
+				integral = integral + error;
+				derivative = error - lastError;
+				float turn = Kp * error + Ki * integral + Kd * derivative;
 
-			// robot goes forward
-			this.robot.getDrive().goForwardWithMotors();
+				// adjust the power of left and right motors in order to make the robot follow
+				// the line
+				this.robot.getDrive().setMotorSpeed(this.robot.getLeftMotor().getTachoCount() - turn,
+						this.robot.getRightMotor().getTachoCount() + turn);
 
-			// update error
-			this.lastError = error;
+				// robot goes forward
+				this.robot.getDrive().goForwardWithMotors();
 
-			try {
-				Thread.sleep(20);
-			} catch (InterruptedException e) {
-				e.printStackTrace();
+				
+
+				// this.drive.setMotorSpeed(Tp + turn, Tp - turn);
+				// this.drive.goForwardWithMotors();
+				//// this.robot.goForward();
+
+				// update error
+				this.lastError = error;
+
+				try {
+					Thread.sleep(20);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
 			}
+
+			Sound.beepSequence();
+
+			this.drive.stopWithMotors();
+
 		}
-		
-		Sound.beepSequence();
-
 	}
-
 }
