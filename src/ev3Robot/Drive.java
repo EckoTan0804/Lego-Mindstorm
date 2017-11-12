@@ -31,18 +31,24 @@ public class Drive {
 	}
 
 	public void goForwardWithMotors() {
+		this.robot.getLeftMotor().startSynchronization();
 		this.robot.getLeftMotor().forward();
 		this.robot.getRightMotor().forward();
+		this.robot.getLeftMotor().endSynchronization();
 	}
 
 	public void goBackwardWithMotors() {
+		this.robot.getLeftMotor().startSynchronization();
 		this.robot.getLeftMotor().backward();
 		this.robot.getRightMotor().backward();
+		this.robot.getLeftMotor().endSynchronization();
 	}
 
 	public void setMotorSpeed(float leftMotorTargetSpeed, float rightMotorTargetSpeed) {
+		this.robot.getLeftMotor().startSynchronization();
 		this.robot.getLeftMotor().setSpeed(leftMotorTargetSpeed);
 		this.robot.getRightMotor().setSpeed(rightMotorTargetSpeed);
+		this.robot.getLeftMotor().endSynchronization();
 	}
 
 	/**
@@ -83,8 +89,15 @@ public class Drive {
 		return this.pilot.isMoving();
 	}
 
-	public void stop() {
+	public void stopWithPilot() {
 		this.pilot.stop();
+	}
+
+	public void stopWithMotors() {
+		this.robot.getLeftMotor().startSynchronization();
+		this.robot.getLeftMotor().stop();
+		this.robot.getRightMotor().stop();
+		this.robot.getLeftMotor().endSynchronization();
 	}
 
 	/**
