@@ -50,6 +50,14 @@ public class Drive {
 		this.robot.getRightMotor().setSpeed(rightMotorTargetSpeed);
 		this.robot.getLeftMotor().endSynchronization();
 	}
+	
+	public void setLeftMotorSpeed(float targetSpeed) {
+		this.robot.getLeftMotor().setSpeed(targetSpeed);
+	}
+	
+	public void setRightMotorSpeed(float targetSpeed) {
+		this.robot.getRightMotor().setSpeed(targetSpeed);
+	}
 
 	/**
 	 * Moves the robot a specific distance (unit: cm) in an (hopefully) straight

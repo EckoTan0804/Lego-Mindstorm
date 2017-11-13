@@ -4,6 +4,7 @@ import ev3Robot.Drive;
 import ev3Robot.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
+import lejos.hardware.lcd.LCD;
 
 /**
  * For mission Line-Following a PID-controller will be used.
@@ -19,30 +20,30 @@ public class LineFollowerThread implements Runnable {
 	private final float BLACK = 0.05f;
 	private final float WHITE = 0.33f;
 
-	private float offset = (WHITE - BLACK) / 2;
+	private float offset = (WHITE + BLACK) / 2;
 
 	/*
 	 * Target power level, power level of both motors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 50;
+	private final float Tp = 200f;
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = (float) ((Tp - 0) / (0.14 - 0));
+	private final float Kp = (float) ((Tp - 0)/ (WHITE - offset)) * 100;
 
 	/*
 	 * the constant for the Integral controller
 	 */
-	private final float Ki = 1f;
+	private final float Ki = 1f * 100;
 
 	/*
 	 * the constant for the derivative controller
 	 */
-	private final float Kd = 50f;
+	private final float Kd = 50f * 100;
 
 	// /*
 	// * Target power level, power level of both motors when the robot is supposed
@@ -81,23 +82,50 @@ public class LineFollowerThread implements Runnable {
 			// get the sample value measured by color sensor
 			// this.robot.
 			// this.drive.goForwardWithMotors();
-			while (Button.LEFT.isUp()) {
 
 				float sampleVal = this.robot.getSensors().getColor();
-
+				
+				LCD.clear();
+				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
+				LCD.drawString("val = " + sampleVal, 0, 1);
 				// calculate turn, based on this value
 				float error = sampleVal - offset;
 				integral = integral + error;
 				derivative = error - lastError;
 				float turn = Kp * error + Ki * integral + Kd * derivative;
+//				float turn = Kp * error;
 
 				// adjust the power of left and right motors in order to make the robot follow
 				// the line
-				this.robot.getDrive().setMotorSpeed(this.robot.getLeftMotor().getTachoCount() - turn,
-						this.robot.getRightMotor().getTachoCount() + turn);
+				float leftTargetSpeed = Tp - turn;
+				float rightTargetSpeed = Tp + turn;
+				LCD.drawString("L = " + leftTargetSpeed, 0, 2);
+				LCD.drawString("R = " + rightTargetSpeed, 0, 3);
+				//this.robot.getDrive().setMotorSpeed(leftTargetSpeed,
+				//		rightTargetSpeed);
+				
+				this.robot.getLeftMotor().startSynchronization();
+				this.robot.getRightMotor().startSynchronization();
+				if (leftTargetSpeed < 0) {
+					this.robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
+					this.robot.getLeftMotor().backward();
+				} else {
+					this.robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
+					this.robot.getLeftMotor().forward();
+				}
+				if (rightTargetSpeed < 0) {
+					this.robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
+					this.robot.getRightMotor().backward();
+				} else {
+					this.robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
+					this.robot.getRightMotor().forward();
+				}
+				this.robot.getLeftMotor().endSynchronization();
+				this.robot.getRightMotor().endSynchronization();
+				
 
 				// robot goes forward
-				this.robot.getDrive().goForwardWithMotors();
+//				this.robot.getDrive().goForwardWithMotors();
 
 				
 
@@ -116,9 +144,14 @@ public class LineFollowerThread implements Runnable {
 			}
 
 			Sound.beepSequence();
-
 			this.drive.stopWithMotors();
-
-		}
 	}
+	
+//	private boolean isGeneral(float sampleVal) {
+//		int rotateAngle = 0;
+//		if (sampleVal <= BLACK) {
+//			this.robot.getDrive().stopWithMotors();
+//			
+//		}
+//	}
 }
