@@ -27,14 +27,14 @@ public class LineFollowerThread implements Runnable {
 	 * Target power level, power level of both mostors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 200f;
+	private final float Tp = 220f;
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = (float) ((Tp - 0)/ (WHITE - offset)) * 2;
+	private final float Kp = (float) (((Tp - 0)/ (WHITE - offset)) * 1.8);
 
 	/*
 	 * the constant for the Integral controller
@@ -92,6 +92,7 @@ public class LineFollowerThread implements Runnable {
 				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
 				LCD.drawString("val = " + sampleVal, 0, 1);
 				//if (sampleVal < BLACK + EPS) {
+				//	this.robot.getDrive().stopWithMotors();
 				//	leftTargetSpeed = Tp;
 				//	rightTargetSpeed = Tp;
 				//} else 
@@ -104,8 +105,8 @@ public class LineFollowerThread implements Runnable {
 					error = sampleVal - offset;
 					integral = integral + error;
 					derivative = error - lastError;
-					float turn = Kp * error + Ki * integral + Kd * derivative;
-					//float turn = Kp * error;
+					//float turn = Kp * error + Ki * integral + Kd * derivative;
+					float turn = Kp * error;
 
 					// adjust the power of left and right motors in order to make the robot follow
 					// the line
