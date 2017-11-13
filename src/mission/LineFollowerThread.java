@@ -19,11 +19,12 @@ public class LineFollowerThread implements Runnable {
 
 	private final float BLACK = 0.05f;
 	private final float WHITE = 0.33f;
+	private final float EPS = 0.01f;
 
 	private float offset = (WHITE + BLACK) / 2;
 
 	/*
-	 * Target power level, power level of both motors when the robot is supposed to
+	 * Target power level, power level of both mostors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
 	private final float Tp = 200f;
@@ -33,17 +34,17 @@ public class LineFollowerThread implements Runnable {
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = (float) ((Tp - 0)/ (WHITE - offset)) * 100;
+	private final float Kp = (float) ((Tp - 0)/ (WHITE - offset)) * 2;
 
 	/*
 	 * the constant for the Integral controller
 	 */
-	private final float Ki = 1f * 100;
+	private final float Ki = 1f;
 
 	/*
 	 * the constant for the derivative controller
 	 */
-	private final float Kd = 50f * 100;
+	private final float Kd = 50f;
 
 	// /*
 	// * Target power level, power level of both motors when the robot is supposed
@@ -82,23 +83,35 @@ public class LineFollowerThread implements Runnable {
 			// get the sample value measured by color sensor
 			// this.robot.
 			// this.drive.goForwardWithMotors();
-
+				float leftTargetSpeed = 0;
+				float rightTargetSpeed = 0;
+				float error = 0;
 				float sampleVal = this.robot.getSensors().getColor();
 				
 				LCD.clear();
 				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
 				LCD.drawString("val = " + sampleVal, 0, 1);
-				// calculate turn, based on this value
-				float error = sampleVal - offset;
-				integral = integral + error;
-				derivative = error - lastError;
-				float turn = Kp * error + Ki * integral + Kd * derivative;
-//				float turn = Kp * error;
+				//if (sampleVal < BLACK + EPS) {
+				//	leftTargetSpeed = Tp;
+				//	rightTargetSpeed = Tp;
+				//} else 
+				if (sampleVal > WHITE - EPS) {
+					this.robot.getDrive().stopWithMotors();
+					leftTargetSpeed = -Tp;
+					rightTargetSpeed = Tp;
+				} else {
+					// calculate turn, based on this value
+					error = sampleVal - offset;
+					integral = integral + error;
+					derivative = error - lastError;
+					float turn = Kp * error + Ki * integral + Kd * derivative;
+					//float turn = Kp * error;
 
-				// adjust the power of left and right motors in order to make the robot follow
-				// the line
-				float leftTargetSpeed = Tp - turn;
-				float rightTargetSpeed = Tp + turn;
+					// adjust the power of left and right motors in order to make the robot follow
+					// the line
+					leftTargetSpeed = Tp - turn;
+					rightTargetSpeed = Tp + turn;
+				}
 				LCD.drawString("L = " + leftTargetSpeed, 0, 2);
 				LCD.drawString("R = " + rightTargetSpeed, 0, 3);
 				//this.robot.getDrive().setMotorSpeed(leftTargetSpeed,
