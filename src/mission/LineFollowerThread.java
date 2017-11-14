@@ -78,24 +78,50 @@ public class LineFollowerThread implements Runnable {
 		this.robot.getDrive().setMotorSpeed(Tp, Tp);
 		this.robot.getDrive().goForwardWithMotors();
 
-		while (Button.LEFT.isUp()) { // stop the routine and back to the main menu if LEFT is pressed
+		/**
+		 * use a timer to count how many times the color sensor detects BLACK after
+		 * detecting WHITE
+		 */
+		int timer = 0;
 
-			
-			float leftTargetSpeed = 0;
-			float rightTargetSpeed = 0;
-			float error = 0;
-			
-			// get the real time sample value measured by color sensor
-			float sampleVal = this.robot.getSensors().getColor();
+		boolean shouldTurnLeftLookForLine = true;
+
+		while (Button.LEFT.isUp()) { // stop the routine and back to the main menu if LEFT is pressed
 
 			LCD.clear();
 			LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
+
+			float leftTargetSpeed = 0;
+			float rightTargetSpeed = 0;
+			float error = 0;
+
+			// get the real time sample value measured by color sensor
+			float sampleVal = this.robot.getSensors().getColor();
 			LCD.drawString("val = " + sampleVal, 0, 1);
+
+			if (sampleVal >= offset) { // the color sensor sees WHITE
+				timer = 0;
+			} else { // the color sensor sees BLACK
+				timer++;
+			}
 
 			if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
 				this.robot.getDrive().stopWithMotors();
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
+
+			} else if (timer >= 3) { // special case: the robot reaches a line gap
+
+				this.robot.getDrive().stopWithMotors();
+
+				// Idea: let the robot move forward like a "s" to look for the line
+				if (shouldTurnLeftLookForLine) {
+					this.robot.getDrive().travelArc(2, 2); // TODO: parameters need to be measured and adjusted
+					shouldTurnLeftLookForLine = false;
+				} else {
+					this.robot.getDrive().travelArc(-2, 2);
+					shouldTurnLeftLookForLine = true;
+				}
 
 			} else { // normal case
 
@@ -116,6 +142,7 @@ public class LineFollowerThread implements Runnable {
 			LCD.drawString("L = " + leftTargetSpeed, 0, 2);
 			LCD.drawString("R = " + rightTargetSpeed, 0, 3);
 
+			// adjust the robot's movement in order to make the robot follow the line
 			this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 
 			// this.robot.getLeftMotor().startSynchronization();
@@ -152,8 +179,10 @@ public class LineFollowerThread implements Runnable {
 	}
 
 	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
+
 		robot.getLeftMotor().startSynchronization();
 		robot.getRightMotor().startSynchronization();
+
 		if (leftTargetSpeed < 0) {
 			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
 			robot.getLeftMotor().backward();
@@ -168,6 +197,7 @@ public class LineFollowerThread implements Runnable {
 			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
 			robot.getRightMotor().forward();
 		}
+
 		robot.getLeftMotor().endSynchronization();
 		robot.getRightMotor().endSynchronization();
 	}
