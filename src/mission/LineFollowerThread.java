@@ -97,7 +97,7 @@ public class LineFollowerThread implements Runnable {
 
 			// get the real time sample value measured by color sensor
 			float sampleVal = this.robot.getSensors().getColor();
-			LCD.drawString("val = " + sampleVal, 0, 1);
+			LCD.drawString("color sensor val = " + sampleVal, 0, 1);
 
 			if (sampleVal >= offset) { // the color sensor sees WHITE
 				timer = 0;
@@ -116,7 +116,7 @@ public class LineFollowerThread implements Runnable {
 
 				// Idea: let the robot move forward like a "s" to look for the line
 				if (shouldTurnLeftLookForLine) {
-					this.robot.getDrive().travelArc(2, 2); // TODO: parameters need to be measured and adjusted
+					this.robot.getDrive().travelArc(2, 4); // TODO: parameters need to be measured and adjusted
 					shouldTurnLeftLookForLine = false;
 				} else {
 					this.robot.getDrive().travelArc(-2, 2);
@@ -139,8 +139,8 @@ public class LineFollowerThread implements Runnable {
 			}
 
 			// print the target speed of left and right motors on the brick's screen
-			LCD.drawString("L = " + leftTargetSpeed, 0, 2);
-			LCD.drawString("R = " + rightTargetSpeed, 0, 3);
+			LCD.drawString("Left Motor = " + leftTargetSpeed, 0, 2);
+			LCD.drawString("Right Motor = " + rightTargetSpeed, 0, 3);
 
 			// adjust the robot's movement in order to make the robot follow the line
 			this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
