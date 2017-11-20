@@ -78,14 +78,6 @@ public class LineFollowerThread implements Runnable {
 		this.robot.getDrive().setMotorSpeed(Tp, Tp);
 		this.robot.getDrive().goForwardWithMotors();
 
-		/**
-		 * use a timer to count how many times the color sensor detects BLACK after
-		 * detecting WHITE
-		 */
-		int timer = 0;
-
-		boolean shouldTurnLeftLookForLine = true;
-
 		while (Button.LEFT.isUp()) { // stop the routine and back to the main menu if LEFT is pressed
 
 			LCD.clear();
@@ -98,33 +90,40 @@ public class LineFollowerThread implements Runnable {
 			// get the real time sample value measured by color sensor
 			float sampleVal = this.robot.getSensors().getColor();
 			LCD.drawString("color sensor val = " + sampleVal, 0, 1);
-
-			if (sampleVal >= offset) { // the color sensor sees WHITE
-				timer = 0;
-			} else { // the color sensor sees BLACK
-				timer++;
-			}
+		
+			//if (this.robot.getSensors().getTouch1())
 
 			if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
-				this.robot.getDrive().stopWithMotors();
+				//this.robot.getDrive().stopWithMotors();
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
 
+				// print the target speed of left and right motors on the brick's screen
+				LCD.drawString("Left Motor = " + leftTargetSpeed, 0, 2);
+				LCD.drawString("Right Motor = " + rightTargetSpeed, 0, 3);
+
+				// adjust the robot's movement in order to make the robot follow the line
+				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
+
 			} 
-//			else if (timer >= 3) { // special case: the robot reaches a line gap
-//
-////				this.robot.getDrive().stopWithMotors();
-//
-//				// Idea: let the robot move forward like a "s" to look for the line
-//				if (shouldTurnLeftLookForLine) {
-//					this.robot.getDrive().travelArc(2, 4); // TODO: parameters need to be measured and adjusted
-//					shouldTurnLeftLookForLine = false;
-//				} else {
-//					this.robot.getDrive().travelArc(-2, 2);
-//					shouldTurnLeftLookForLine = true;
-//				}
-//
-//			} 
+			else if (sampleVal < BLACK + EPS) { // special case: the robot reaches a line gap
+
+				//this.robot.getDrive().stopWithMotors();
+
+				int arc = 0;
+				boolean found = false;
+				while (arc < 90 && !found) {
+					this.robot.getDrive().turnRight(10);
+					found = this.robot.getSensors().getColor() >= offset;
+					arc += 10;
+				}
+				
+				if (!found) {
+					this.robot.getDrive().turnLeft(arc + 10);
+					findLine();
+				}
+
+			} 
 			else { // normal case
 
 				// calculate turn, based on the sample value
@@ -138,14 +137,14 @@ public class LineFollowerThread implements Runnable {
 				// the line
 				leftTargetSpeed = Tp - turn;
 				rightTargetSpeed = Tp + turn;
+
+				// print the target speed of left and right motors on the brick's screen
+				LCD.drawString("Left Motor = " + leftTargetSpeed, 0, 2);
+				LCD.drawString("Right Motor = " + rightTargetSpeed, 0, 3);
+
+				// adjust the robot's movement in order to make the robot follow the line
+				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 			}
-
-			// print the target speed of left and right motors on the brick's screen
-			LCD.drawString("Left Motor = " + leftTargetSpeed, 0, 2);
-			LCD.drawString("Right Motor = " + rightTargetSpeed, 0, 3);
-
-			// adjust the robot's movement in order to make the robot follow the line
-			this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 
 			// this.robot.getLeftMotor().startSynchronization();
 			// this.robot.getRightMotor().startSynchronization();
@@ -178,6 +177,20 @@ public class LineFollowerThread implements Runnable {
 
 		Sound.beepSequence();
 		this.drive.stopWithMotors();
+	}
+	
+	private void findLine() {
+		boolean found = false;
+		while (!found) {
+			this.robot.getDrive().travel(7);
+			int arc = 0;
+			while (arc < 90 && !found) {
+				this.robot.getDrive().turnRight(10);
+				found = this.robot.getSensors().getColor() >=BLACK + EPS;
+				arc += 10;
+			}
+			if (!found) this.robot.getDrive().turnLeft(arc + 1);
+		}
 	}
 
 	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
