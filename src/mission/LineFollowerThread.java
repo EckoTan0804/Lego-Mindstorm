@@ -27,14 +27,14 @@ public class LineFollowerThread implements Runnable {
 	 * Target power level, power level of both mostors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 220f;
+	private final float Tp = 250f;
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = (float) (((Tp - 0) / (WHITE - offset)) * 1.8);
+	private final float Kp = (float) (((Tp - 0) / (WHITE - offset)) * 1.2);
 
 	/*
 	 * the constant for the Integral controller
@@ -89,18 +89,23 @@ public class LineFollowerThread implements Runnable {
 
 			// get the real time sample value measured by color sensor
 			float sampleVal = this.robot.getSensors().getColor();
-			LCD.drawString("color sensor val = " + sampleVal, 0, 1);
+			LCD.drawString("val= " + sampleVal, 0, 1);
+			LCD.drawString("T1val= " + this.robot.getSensors().getTouch1(), 0, 5);
+			LCD.drawString("T2val= " + this.robot.getSensors().getTouch2(), 0, 6);
 		
-			//if (this.robot.getSensors().getTouch1())
-
+			if ((this.robot.getSensors().getTouch1()) > 0.2
+					&& (this.robot.getSensors().getTouch2()) > 0.2) {
+						overObstacle();
+					}
+			else
 			if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
 				//this.robot.getDrive().stopWithMotors();
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
 
 				// print the target speed of left and right motors on the brick's screen
-				LCD.drawString("Left Motor = " + leftTargetSpeed, 0, 2);
-				LCD.drawString("Right Motor = " + rightTargetSpeed, 0, 3);
+				LCD.drawString("L= " + leftTargetSpeed, 0, 2);
+				LCD.drawString("R= " + rightTargetSpeed, 0, 3);
 
 				// adjust the robot's movement in order to make the robot follow the line
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
@@ -139,8 +144,8 @@ public class LineFollowerThread implements Runnable {
 				rightTargetSpeed = Tp + turn;
 
 				// print the target speed of left and right motors on the brick's screen
-				LCD.drawString("Left Motor = " + leftTargetSpeed, 0, 2);
-				LCD.drawString("Right Motor = " + rightTargetSpeed, 0, 3);
+				LCD.drawString("L = " + leftTargetSpeed, 0, 2);
+				LCD.drawString("R = " + rightTargetSpeed, 0, 3);
 
 				// adjust the robot's movement in order to make the robot follow the line
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
@@ -179,6 +184,17 @@ public class LineFollowerThread implements Runnable {
 		this.drive.stopWithMotors();
 	}
 	
+	private void overObstacle() {
+		this.robot.getDrive().travel(-3);
+		this.robot.getDrive().turnRight(90);
+		this.robot.getDrive().travel(20);
+		this.robot.getDrive().turnLeft(90);
+		this.robot.getDrive().travel(40);
+		this.robot.getDrive().turnLeft(90);
+		this.robot.getDrive().travel(22);
+		this.robot.getDrive().turnRight(90);
+	}
+	
 	private void findLine() {
 		boolean found = false;
 		while (!found) {
@@ -186,7 +202,7 @@ public class LineFollowerThread implements Runnable {
 			int arc = 0;
 			while (arc < 90 && !found) {
 				this.robot.getDrive().turnRight(10);
-				found = this.robot.getSensors().getColor() >=BLACK + EPS;
+				found = this.robot.getSensors().getColor() > BLACK + 2 * EPS;
 				arc += 10;
 			}
 			if (!found) this.robot.getDrive().turnLeft(arc + 1);
