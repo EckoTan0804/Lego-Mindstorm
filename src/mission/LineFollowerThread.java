@@ -110,20 +110,22 @@ public class LineFollowerThread implements Runnable {
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
 
-			} else if (timer >= 3) { // special case: the robot reaches a line gap
-
-				this.robot.getDrive().stopWithMotors();
-
-				// Idea: let the robot move forward like a "s" to look for the line
-				if (shouldTurnLeftLookForLine) {
-					this.robot.getDrive().travelArc(2, 4); // TODO: parameters need to be measured and adjusted
-					shouldTurnLeftLookForLine = false;
-				} else {
-					this.robot.getDrive().travelArc(-2, 2);
-					shouldTurnLeftLookForLine = true;
-				}
-
-			} else { // normal case
+			} 
+//			else if (timer >= 3) { // special case: the robot reaches a line gap
+//
+////				this.robot.getDrive().stopWithMotors();
+//
+//				// Idea: let the robot move forward like a "s" to look for the line
+//				if (shouldTurnLeftLookForLine) {
+//					this.robot.getDrive().travelArc(2, 4); // TODO: parameters need to be measured and adjusted
+//					shouldTurnLeftLookForLine = false;
+//				} else {
+//					this.robot.getDrive().travelArc(-2, 2);
+//					shouldTurnLeftLookForLine = true;
+//				}
+//
+//			} 
+			else { // normal case
 
 				// calculate turn, based on the sample value
 				error = sampleVal - offset;
