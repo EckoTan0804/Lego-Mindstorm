@@ -90,7 +90,7 @@ public class Drive {
 	 *            method returns immediately.
 	 */
 	public void travelArc(double radius, double distance) {
-		this.pilot.travelArc(radius, distance, true);
+		this.pilot.travelArc(radius, distance, false);
 	}
 
 	public boolean isMoving() {
@@ -115,7 +115,7 @@ public class Drive {
 	 *            left (anti-clockwise), negative right.
 	 */
 	public void rotate(double angle) {
-		this.pilot.rotate(angle, true);
+		this.pilot.rotate(angle, false);
 	}
 	
 	public void turnLeft(double angle) throws IllegalArgumentException {
