@@ -58,12 +58,12 @@ public class LineFollower {
 	private float derivative = 0f;
 
 	private Robot robot;
-//	private Drive drive;
+	// private Drive drive;
 
 	public LineFollower(Robot robot) {
-		
+
 		this.robot = robot;
-//		this.drive = robot.getDrive();
+		// this.drive = robot.getDrive();
 	}
 
 	public void startLineFollowing() {
@@ -84,22 +84,19 @@ public class LineFollower {
 
 			// get the real time sample value measured by color sensor
 			float sampleVal = this.robot.getSensors().getColor();
-			LCD.drawString("val= " + sampleVal, 0, 1);
-			LCD.drawString("T1val= " + this.robot.getSensors().getTouch1(), 0, 5);
-			LCD.drawString("T2val= " + this.robot.getSensors().getTouch2(), 0, 6);
+			LCD.drawString("color = " + sampleVal, 0, 1);
+			LCD.drawString("TS1 = " + this.robot.getSensors().getTouch1(), 0, 5);
+			LCD.drawString("TS2 = " + this.robot.getSensors().getTouch2(), 0, 6);
 
 			if ((this.robot.getSensors().getTouch1()) > 0.2 && (this.robot.getSensors().getTouch2()) > 0.2) {
+				// special case: the robot reaches an obstacle
 				overObstacle();
-				
+
 			} else if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
-				
+
 				// this.robot.getDrive().stopWithMotors();
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
-
-				// print the target speed of left and right motors on the brick's screen
-				LCD.drawString("L= " + leftTargetSpeed, 0, 2);
-				LCD.drawString("R= " + rightTargetSpeed, 0, 3);
 
 				// adjust the robot's movement in order to make the robot follow the line
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
@@ -134,10 +131,6 @@ public class LineFollower {
 				// the line
 				leftTargetSpeed = Tp - turn;
 				rightTargetSpeed = Tp + turn;
-
-				// print the target speed of left and right motors on the brick's screen
-				LCD.drawString("L = " + leftTargetSpeed, 0, 2);
-				LCD.drawString("R = " + rightTargetSpeed, 0, 3);
 
 				// adjust the robot's movement in order to make the robot follow the line
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
@@ -184,6 +177,10 @@ public class LineFollower {
 	}
 
 	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
+		
+		// print the target speed of left and right motors on the brick's screen
+		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
+		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
 
 		robot.getLeftMotor().startSynchronization();
 		robot.getRightMotor().startSynchronization();
