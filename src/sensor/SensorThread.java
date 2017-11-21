@@ -66,6 +66,16 @@ public class SensorThread implements Runnable {
 	public void setDistance(float distance) {
 		this.distance = distance;
 	}
+
+	public SingleValueSensorWrapper getsColor() {
+		return sColor;
+	}
+
+	public void setsColor(SingleValueSensorWrapper sColor) {
+		this.sColor = sColor;
+	}
+	
+	
 	
 	
 
