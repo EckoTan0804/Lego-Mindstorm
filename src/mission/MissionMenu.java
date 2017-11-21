@@ -41,11 +41,8 @@ public class MissionMenu extends TextMenu {
 				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
 
 				// line following routine will be executed
-				Thread lineFollowerThread = new Thread(new LineFollowerThread(robot));
-				// lineFollowerThread.start();
-				// Thread.sleep(20);
-				// lineFollowerThread.join();
-				lineFollowerThread.run();
+				LineFollower lineFollower = new LineFollower(robot);
+				lineFollower.startLineFollowing();
 				break;
 
 			case MissionMenu.MENU_ITEM_LABYRINTH:

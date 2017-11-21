@@ -10,7 +10,7 @@ import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3TouchSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
 import lejos.robotics.navigation.DifferentialPilot;
-import mission.LineFollowerThread;
+import mission.LineFollower;
 import mission.Mission;
 import mission.MissionMenu;
 import sensor.SensorThread;

@@ -15,7 +15,7 @@ import lejos.hardware.lcd.LCD;
  * @author EckoTan
  *
  */
-public class LineFollowerThread implements Runnable {
+public class LineFollower {
 
 	private final float BLACK = 0.05f;
 	private final float WHITE = 0.33f;
@@ -58,20 +58,15 @@ public class LineFollowerThread implements Runnable {
 	private float derivative = 0f;
 
 	private Robot robot;
-	private Drive drive;
+//	private Drive drive;
 
-	public LineFollowerThread(Robot robot) {
-		super();
+	public LineFollower(Robot robot) {
+		
 		this.robot = robot;
-		this.drive = robot.getDrive();
+//		this.drive = robot.getDrive();
 	}
 
-	@Override
-	public void run() {
-		this.lineFollowing();
-	}
-
-	private void lineFollowing() {
+	public void startLineFollowing() {
 
 		Sound.beep();
 
@@ -92,14 +87,13 @@ public class LineFollowerThread implements Runnable {
 			LCD.drawString("val= " + sampleVal, 0, 1);
 			LCD.drawString("T1val= " + this.robot.getSensors().getTouch1(), 0, 5);
 			LCD.drawString("T2val= " + this.robot.getSensors().getTouch2(), 0, 6);
-		
-			if ((this.robot.getSensors().getTouch1()) > 0.2
-					&& (this.robot.getSensors().getTouch2()) > 0.2) {
-						overObstacle();
-					}
-			else
-			if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
-				//this.robot.getDrive().stopWithMotors();
+
+			if ((this.robot.getSensors().getTouch1()) > 0.2 && (this.robot.getSensors().getTouch2()) > 0.2) {
+				overObstacle();
+				
+			} else if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
+				
+				// this.robot.getDrive().stopWithMotors();
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
 
@@ -110,10 +104,9 @@ public class LineFollowerThread implements Runnable {
 				// adjust the robot's movement in order to make the robot follow the line
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 
-			} 
-			else if (sampleVal < BLACK + EPS) { // special case: the robot reaches a line gap
+			} else if (sampleVal < BLACK + EPS) { // special case: the robot reaches a line gap
 
-				//this.robot.getDrive().stopWithMotors();
+				// this.robot.getDrive().stopWithMotors();
 
 				int arc = 0;
 				boolean found = false;
@@ -122,14 +115,13 @@ public class LineFollowerThread implements Runnable {
 					found = this.robot.getSensors().getColor() >= offset;
 					arc += 10;
 				}
-				
+
 				if (!found) {
 					this.robot.getDrive().turnLeft(arc + 10);
 					findLine();
 				}
 
-			} 
-			else { // normal case
+			} else { // normal case
 
 				// calculate turn, based on the sample value
 				error = sampleVal - offset;
@@ -151,25 +143,6 @@ public class LineFollowerThread implements Runnable {
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 			}
 
-			// this.robot.getLeftMotor().startSynchronization();
-			// this.robot.getRightMotor().startSynchronization();
-			// if (leftTargetSpeed < 0) {
-			// this.robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
-			// this.robot.getLeftMotor().backward();
-			// } else {
-			// this.robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
-			// this.robot.getLeftMotor().forward();
-			// }
-			// if (rightTargetSpeed < 0) {
-			// this.robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
-			// this.robot.getRightMotor().backward();
-			// } else {
-			// this.robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
-			// this.robot.getRightMotor().forward();
-			// }
-			// this.robot.getLeftMotor().endSynchronization();
-			// this.robot.getRightMotor().endSynchronization();
-
 			// update error
 			this.lastError = error;
 
@@ -181,9 +154,9 @@ public class LineFollowerThread implements Runnable {
 		}
 
 		Sound.beepSequence();
-		this.drive.stopWithMotors();
+		this.robot.getDrive().stopWithMotors();
 	}
-	
+
 	private void overObstacle() {
 		this.robot.getDrive().travel(-3);
 		this.robot.getDrive().turnRight(90);
@@ -194,7 +167,7 @@ public class LineFollowerThread implements Runnable {
 		this.robot.getDrive().travel(22);
 		this.robot.getDrive().turnRight(90);
 	}
-	
+
 	private void findLine() {
 		boolean found = false;
 		while (!found) {
@@ -205,7 +178,8 @@ public class LineFollowerThread implements Runnable {
 				found = this.robot.getSensors().getColor() > BLACK + 2 * EPS;
 				arc += 10;
 			}
-			if (!found) this.robot.getDrive().turnLeft(arc + 1);
+			if (!found)
+				this.robot.getDrive().turnLeft(arc + 1);
 		}
 	}
 
