@@ -29,8 +29,12 @@ public class Robot implements Runnable {
 	private static final Port TOUCH_SENSOR_2 = SensorPort.S3;
 	private static final Port ULTRASONIC_SENSOR = SensorPort.S4;
 
-	// private DifferentialPilot pilot;
 	private SensorThread sensors;
+	private final EV3ColorSensor colorS = new EV3ColorSensor(COLOR_SENSOR);
+	private final EV3TouchSensor touchS1 = new EV3TouchSensor(TOUCH_SENSOR_1);
+	private final EV3TouchSensor touchS2 = new EV3TouchSensor(TOUCH_SENSOR_2);
+	private final EV3UltrasonicSensor ultraS = new EV3UltrasonicSensor(ULTRASONIC_SENSOR);
+	
 	private MissionMenu missionMenu;
 
 	private EV3LargeRegulatedMotor leftMotor;
@@ -42,13 +46,6 @@ public class Robot implements Runnable {
 
 		this.leftMotor = new EV3LargeRegulatedMotor(LEFT_MOTOR);
 		this.rightMotor = new EV3LargeRegulatedMotor(RIGHT_MOTOR);
-		// this.pilot = new DifferentialPilot(WHEEL_DIAMETER, TRACK_WIDTH, leftMotor,
-		// rightMotor, false);
-
-		EV3ColorSensor colorS = new EV3ColorSensor(COLOR_SENSOR);
-		EV3TouchSensor touchS1 = new EV3TouchSensor(TOUCH_SENSOR_1);
-		EV3TouchSensor touchS2 = new EV3TouchSensor(TOUCH_SENSOR_2);
-		EV3UltrasonicSensor ultraS = new EV3UltrasonicSensor(ULTRASONIC_SENSOR);
 
 		SingleValueSensorWrapper color = new SingleValueSensorWrapper(colorS, "Red");
 		SingleValueSensorWrapper touch1 = new SingleValueSensorWrapper(touchS1, "Touch");
@@ -70,21 +67,10 @@ public class Robot implements Runnable {
 		this.missionMenu.startGUI(this); // show menu on the brick's screen
 		System.exit(0);
 	}
-
-	@Override
-	public void run() {
-		// show mission menu on the brick's screen
-		// this.missionMenu = new MissionMenu();
-
+	
+	public void changeSettingsForLabyrinth() {
+		this.sensors.setsColor(new SingleValueSensorWrapper(colorS, "Color ID"));
 	}
-
-	// private void sleep(int millis) {
-	// try {
-	// Thread.sleep(millis);
-	// } catch (InterruptedException e) {
-	// e.printStackTrace();
-	// }
-	// }
 
 	// ============= setters and getters ========================
 
