@@ -132,6 +132,11 @@ public class Drive {
 		this.rotate(-angle);
 	}
 	
+	public void flt() {
+		this.robot.getLeftMotor().flt();
+		this.robot.getRightMotor().flt();
+	}
+	
 	
 
 }
