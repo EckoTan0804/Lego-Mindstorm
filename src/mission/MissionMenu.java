@@ -5,6 +5,7 @@ import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.utility.TextMenu;
+import util.BrickScreen;
 
 public class MissionMenu extends TextMenu {
 
@@ -28,43 +29,46 @@ public class MissionMenu extends TextMenu {
 		
 		Sound.beepSequenceUp();
 		
-		while (Button.ESCAPE.isUp()) { // manual stop the program when Button "Escape" is pressed
+		while (Button.ESCAPE.isUp()) { /* manual stop the program when Button "Escape" is pressed */
 
-			LCD.clear();
+			BrickScreen.clearScreen();
 
-			// choose mission-routine from mission menu
+			/* choose mission-routine from mission menu */
 			switch (this.select()) {
 
 			case MissionMenu.MENU_ITEM_LINE_FOLLOWING:
-				// show "Line following" on the display
-				LCD.clear();
-				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
+				BrickScreen.clearScreen();
+//				LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
 
-				// line following routine will be executed
+				/* line following routine will be executed */
 				LineFollower lineFollower = new LineFollower(robot);
 				lineFollower.startLineFollowing();
 				break;
 
 			case MissionMenu.MENU_ITEM_LABYRINTH:
-				// show "Labyrinth" on the display
-				LCD.clear();
-				LCD.drawString(Mission.LABYRINTH.getMission(), 0, 0);
+				
+				BrickScreen.clearScreen();
+//				LCD.drawString(Mission.LABYRINTH.getMission(), 0, 0);
 
-				// labyrinth routine will be executed
+				/* labyrinth routine will be executed */
+				Labyrinth labyrinth = new Labyrinth(robot);
+				labyrinth.startLabyrinth();
 				break;
 
 			case MissionMenu.MENU_ITEM_OBSTACLE_SHIFTING:
-				// show "Obstacle shifting" on the display
-				LCD.clear();
-				LCD.drawString(Mission.OBSTACLE_SHIFTING.getMission(), 0, 0);
-				// obstacle shifting routine will be executed
+
+				BrickScreen.clearScreen();
+//				LCD.drawString(Mission.OBSTACLE_SHIFTING.getMission(), 0, 0);
+				
+				/* obstacle shifting routine will be executed */
 				break;
 
 			default:
-				// show "Bridge" on the display
-				LCD.clear();
-				LCD.drawString(Mission.BRIDGE.getMission(), 0, 0);
-				// bridge routine will be executed
+				
+				BrickScreen.clearScreen();
+//				LCD.drawString(Mission.BRIDGE.getMission(), 0, 0);
+				
+				/* bridge routine will be executed */
 				break;
 			}
 

@@ -5,6 +5,7 @@ import ev3Robot.Robot;
 import lejos.hardware.Button;
 import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
+import util.BrickScreen;
 
 /**
  * For mission Line-Following a PID-controller will be used.
@@ -73,35 +74,41 @@ public class LineFollower {
 		this.robot.getDrive().setMotorSpeed(Tp, Tp);
 		this.robot.getDrive().goForwardWithMotors();
 
-		while (Button.LEFT.isUp()) { // stop the routine and back to the main menu if LEFT is pressed
+		while (Button.LEFT.isUp()) { /* stop the routine and back to the main menu if LEFT is pressed */
 
-			LCD.clear();
-			LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
+			BrickScreen.clearScreen();
+			BrickScreen.show(Mission.LINE_FOLLOWING.getMission());
+			// LCD.clear();
+			// LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
 
 			float leftTargetSpeed = 0;
 			float rightTargetSpeed = 0;
 			float error = 0;
 
-			// get the real time sample value measured by color sensor
+			/* get the real time sample value measured by color sensor */
+
 			float sampleVal = this.robot.getSensors().getColor();
-			LCD.drawString("color = " + sampleVal, 0, 1);
-			LCD.drawString("TS1 = " + this.robot.getSensors().getTouch1(), 0, 5);
-			LCD.drawString("TS2 = " + this.robot.getSensors().getTouch2(), 0, 6);
+			BrickScreen.show("color = " + sampleVal);
+			BrickScreen.show("TS1 = " + this.robot.getSensors().getTouch1());
+			BrickScreen.show("TS2 = " + this.robot.getSensors().getTouch2());
+			// LCD.drawString("color = " + sampleVal, 0, 1);
+			// LCD.drawString("TS1 = " + this.robot.getSensors().getTouch1(), 0, 5);
+			// LCD.drawString("TS2 = " + this.robot.getSensors().getTouch2(), 0, 6);
 
 			if ((this.robot.getSensors().getTouch1()) > 0.2 && (this.robot.getSensors().getTouch2()) > 0.2) {
-				// special case: the robot reaches an obstacle
+				/* special case: the robot reaches an obstacle */
 				overObstacle();
 
-			} else if (sampleVal > WHITE - EPS) { // special case: the robot need to do a 90 degree rotation
+			} else if (sampleVal > WHITE - EPS) { /* special case: the robot need to do a 90 degree rotation */
 
 				// this.robot.getDrive().stopWithMotors();
 				leftTargetSpeed = -Tp;
 				rightTargetSpeed = Tp;
 
-				// adjust the robot's movement in order to make the robot follow the line
+				/* adjust the robot's movement in order to make the robot follow the line */
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 
-			} else if (sampleVal < BLACK + EPS) { // special case: the robot reaches a line gap
+			} else if (sampleVal < BLACK + EPS) { /* special case: the robot reaches a line gap */
 
 				// this.robot.getDrive().stopWithMotors();
 
@@ -118,25 +125,27 @@ public class LineFollower {
 					findLine();
 				}
 
-			} else { // normal case
+			} else { /* normal case */
 
-				// calculate turn, based on the sample value
+				/* calculate turn, based on the sample value */
 				error = sampleVal - offset;
 				integral = integral + error;
 				derivative = error - lastError;
 				// float turn = Kp * error + Ki * integral + Kd * derivative;
-				float turn = Kp * error; // only a P-controller will be used.
+				float turn = Kp * error; /* only a P-controller will be used. */
 
-				// adjust the power of left and right motors in order to make the robot follow
-				// the line
+				/*
+				 * adjust the power of left and right motors in order to make the robot follow
+				 * the line
+				 */
 				leftTargetSpeed = Tp - turn;
 				rightTargetSpeed = Tp + turn;
 
-				// adjust the robot's movement in order to make the robot follow the line
+				/* adjust the robot's movement in order to make the robot follow the line */
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 			}
 
-			// update error
+			/* update error */
 			this.lastError = error;
 
 			try {
@@ -147,6 +156,7 @@ public class LineFollower {
 		}
 
 		Sound.beepSequence();
+		LCD.clear();
 		this.robot.getDrive().stopWithMotors();
 	}
 
@@ -177,10 +187,12 @@ public class LineFollower {
 	}
 
 	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
-		
-		// print the target speed of left and right motors on the brick's screen
-		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
-		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
+
+		/* print the target speed of left and right motors on the brick's screen */
+		BrickScreen.show("L= " + leftTargetSpeed);
+		BrickScreen.show("L= " + rightTargetSpeed);
+//		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
+//		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
 
 		robot.getLeftMotor().startSynchronization();
 		robot.getRightMotor().startSynchronization();

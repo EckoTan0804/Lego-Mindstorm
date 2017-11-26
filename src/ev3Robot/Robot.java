@@ -69,7 +69,12 @@ public class Robot implements Runnable {
 	}
 	
 	public void changeSettingsForLabyrinth() {
-		this.sensors.setsColor(new SingleValueSensorWrapper(colorS, "Color ID"));
+//		this.sensors.setsColor(new SingleValueSensorWrapper(colorS, "Color ID"));
+		this.colorS.setCurrentMode("Color ID");
+	}
+	
+	public int getColorID() {
+		return this.colorS.getColorID();
 	}
 
 	// ============= setters and getters ========================
