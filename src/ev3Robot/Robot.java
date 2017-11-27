@@ -16,7 +16,7 @@ import mission.MissionMenu;
 import sensor.SensorThread;
 import sensor.SingleValueSensorWrapper;
 
-public class Robot implements Runnable {
+public class Robot {
 
 	// Date need to be measured and adjusted
 	private final double WHEEL_DIAMETER = 3.2d; // unit:cm
@@ -62,7 +62,6 @@ public class Robot implements Runnable {
 
 	public void mainLoop() throws InterruptedException {
 		// new Thread(this.sensors).start();
-		new Thread(this).start(); // start the program
 		Button.LEDPattern(1); // green light
 		this.missionMenu.startGUI(this); // show menu on the brick's screen
 		System.exit(0);

@@ -25,24 +25,24 @@ public class LineFollower {
 	private float offset = (WHITE + BLACK) / 2;
 
 	/*
-	 * Target power level, power level of both mostors when the robot is supposed to
+	 * Target power level, power level of both motors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 250f;
+	private final float Tp = 260f;
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = (float) (((Tp - 0) / (WHITE - offset)) * 1.2);
+	private final float Kp = (((Tp - 0) / (WHITE - offset)) * 1.1f);
 
 	/*
 	 * the constant for the Integral controller
 	 */
 	private final float Ki = 1f;
 
-	/*
+	/* 
 	 * the constant for the derivative controller
 	 */
 	private final float Kd = 50f;
@@ -99,12 +99,12 @@ public class LineFollower {
 				/* special case: the robot reaches an obstacle */
 				overObstacle();
 
-			} else if (sampleVal > WHITE - EPS) { /* special case: the robot need to do a 90 degree rotation */
+			} else if (sampleVal > WHITE - 2 * EPS) { /* special case: the robot need to do a 90 degree rotation */
 
 				// this.robot.getDrive().stopWithMotors();
-				leftTargetSpeed = -Tp;
-				rightTargetSpeed = Tp;
-
+				leftTargetSpeed = -1.2f * Tp;
+				rightTargetSpeed = 1.2f * Tp;
+ 
 				/* adjust the robot's movement in order to make the robot follow the line */
 				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 
@@ -116,7 +116,7 @@ public class LineFollower {
 				boolean found = false;
 				while (arc < 90 && !found) {
 					this.robot.getDrive().turnRight(10);
-					found = this.robot.getSensors().getColor() >= offset;
+					found = this.robot.getSensors().getColor() >= offset + 2 * EPS;
 					arc += 10;
 				}
 
@@ -163,18 +163,18 @@ public class LineFollower {
 	private void overObstacle() {
 		this.robot.getDrive().travel(-3);
 		this.robot.getDrive().turnRight(90);
-		this.robot.getDrive().travel(20);
+		this.robot.getDrive().travel(25);
 		this.robot.getDrive().turnLeft(90);
 		this.robot.getDrive().travel(40);
 		this.robot.getDrive().turnLeft(90);
-		this.robot.getDrive().travel(22);
+		this.robot.getDrive().travel(26);
 		this.robot.getDrive().turnRight(90);
 	}
 
 	private void findLine() {
 		boolean found = false;
 		while (!found) {
-			this.robot.getDrive().travel(7);
+			this.robot.getDrive().travel(8);
 			int arc = 0;
 			while (arc < 90 && !found) {
 				this.robot.getDrive().turnRight(10);
@@ -190,7 +190,7 @@ public class LineFollower {
 
 		/* print the target speed of left and right motors on the brick's screen */
 		BrickScreen.show("L= " + leftTargetSpeed);
-		BrickScreen.show("L= " + rightTargetSpeed);
+		BrickScreen.show("R= " + rightTargetSpeed);
 //		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
 //		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
 
