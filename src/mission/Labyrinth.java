@@ -9,6 +9,7 @@ import util.BrickScreen;
 public class Labyrinth {
 
 	private Robot robot;
+	private boolean beginLabyrinth = false;
 	private boolean endLabyrinth = false;
 
 	public Labyrinth(Robot robot) {
@@ -21,7 +22,7 @@ public class Labyrinth {
 		this.robot.changeSettingsForLabyrinth();
 		BrickScreen.show("Labyrinth");
 
-		float speed = this.robot.getLeftMotor().getMaxSpeed();
+		float speed = this.robot.getLeftMotor().getMaxSpeed(); // TODO: need to adjust the speed
 		this.robot.getDrive().setMotorSpeed(speed, speed);
 		this.robot.getDrive().goForwardWithMotors();
 
@@ -29,7 +30,7 @@ public class Labyrinth {
 
 			// int colorVal = (int) this.robot.getSensors().getColor();
 			int colorID = this.robot.getColorID();
-			BrickScreen.show("color = " + colorID);
+			BrickScreen.showStringOnScreen("color = " + colorID, 0, 1);
 //			LCD.drawString("color = " + colorID, 0, 1);
 
 			switch (colorID) {
@@ -38,25 +39,23 @@ public class Labyrinth {
 				/*
 				 * the robot reaches a cross or a corner, needs to do a 90 degree rotation
 				 */
-				this.robot.getDrive().stopWithMotors();
+				this.robot.getDrive().flt();
 				this.robot.getDrive().turnRight(90);
+				this.robot.getDrive().travel(5);
 
 				if (this.robot.getColorID() != Color.WHITE) {
 
 					if (this.robot.getColorID() == Color.BLACK) {
-						/*
-						 * If the robot sees BLACK after it has turned right for 90 degree, that means,
-						 * it has reached an dead end.
-						 */
-						this.robot.getDrive().turnRight(90);
-					} else {
-						/*
-						 * If the robot can not find the white line or BLACK after it has turned right
-						 * for 90 degree, that means, the white line is on its left side so it should
-						 * turn left for 180 degree to look for the line
-						 */
-						this.robot.getDrive().turnLeft(180);
-					}
+						this.findWay();
+						
+						if (this.robot.getColorID() != Color.WHITE) { 
+							this.findWay();
+							
+							if (this.robot.getColorID() != Color.WHITE) { /* dead end! */
+								this.findWay();
+							}
+						}
+					} 
 
 				}
 				break;
@@ -82,10 +81,13 @@ public class Labyrinth {
 				break;
 
 			case Color.BLUE:
-				/*
-				 * the robot reaches the destination, finish!
-				 */
-				this.endLabyrinth = true;
+				if (this.beginLabyrinth == false && this.endLabyrinth == false) {
+					/* The robot arrives at the starting point */
+					this.beginLabyrinth = true;
+				} else if (this.beginLabyrinth == true && this.endLabyrinth == false) {
+					/* The robot arrives at the destination */
+					this.endLabyrinth = true;
+				}
 				break;
 
 			case Color.WHITE:
@@ -118,25 +120,12 @@ public class Labyrinth {
 		}
 	}
 	
-	private static void showColorOnScreen(int colorID) {
-		String color = "";
-		switch(colorID) {
-			case Color.RED:
-				color = "Red";
-				break;
-			case Color.GREEN:
-				color = "Green";
-				break;
-			case Color.BLUE:
-				color = "Blue";
-				break;
-			case Color.YELLOW:
-				color = "Yellow";
-				break;
-			case Color.BLACK:
-				color = ""
-		}
-		
+	private void findWay() {
+		this.robot.getDrive().travel(-5);
+		this.robot.getDrive().turnLeft(90);
+		this.robot.getDrive().travel(5);
 	}
+	
+
 
 }
