@@ -102,10 +102,17 @@ public class Drive {
 	}
 
 	public void stopWithMotors() {
-		this.robot.getLeftMotor().startSynchronization();
-		this.robot.getLeftMotor().stop();
-		this.robot.getRightMotor().stop();
-		this.robot.getLeftMotor().endSynchronization();
+		//this.robot.getLeftMotor().startSynchronization();
+		this.robot.getLeftMotor().stop(true);
+		this.robot.getRightMotor().stop(true);
+		//this.robot.getLeftMotor().endSynchronization();
+	}
+	
+	/**
+	 * Use this method if the normal stop is too slow
+	 */
+	public void quickStop() {
+		this.pilot.quickStop();
 	}
 
 	/**
