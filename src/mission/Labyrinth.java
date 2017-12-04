@@ -19,53 +19,63 @@ public class Labyrinth {
 
 	public void startLabyrinth() {
 
-		this.robot.changeSettingsForLabyrinth();
 		BrickScreen.show("Labyrinth");
 
-		float speed = this.robot.getLeftMotor().getMaxSpeed(); // TODO: need to adjust the speed
+		this.robot.changeSettingsForLabyrinth();
+
+		try {
+			Thread.sleep(20);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		float speed = 10f; // TODO: need to adjust the speed
 		this.robot.getDrive().setMotorSpeed(speed, speed);
 		this.robot.getDrive().goForwardWithMotors();
 
+		int distance = 4;
+
 		while (Button.LEFT.isUp() && (!endLabyrinth)) {
 
-			// int colorVal = (int) this.robot.getSensors().getColor();
-			int colorID = this.robot.getColorID();
-			BrickScreen.showStringOnScreen("color = " + colorID, 0, 1);
-//			LCD.drawString("color = " + colorID, 0, 1);
+			BrickScreen.clearScreen();
+
+			int colorID = this.getColorID();
+			this.showColorIdOnScreen(colorID);
 
 			switch (colorID) {
 
 			case Color.RED:
-				/*
-				 * the robot reaches a cross or a corner, needs to do a 90 degree rotation
-				 */
-				this.robot.getDrive().flt();
+				// BrickScreen.showStringOnScreen("Red", 0, 1);
+				// this.robot.getDrive().flt();
+				this.robot.getDrive().quickStop();
 				this.robot.getDrive().turnRight(90);
-				this.robot.getDrive().travel(5);
+				this.robot.getDrive().travel(distance);
 
-				if (this.robot.getColorID() != Color.WHITE) {
+				if (this.getColorID() != Color.WHITE) {
+					this.findWay(distance);
 
-					if (this.robot.getColorID() == Color.BLACK) {
-						this.findWay();
-						
-						if (this.robot.getColorID() != Color.WHITE) { 
-							this.findWay();
-							
-							if (this.robot.getColorID() != Color.WHITE) { /* dead end! */
-								this.findWay();
+					if (this.getColorID() != Color.WHITE) {
+						this.findWay(distance);
+
+						if (this.getColorID() != Color.WHITE) {
+							this.findWay(distance);
+
+							if (this.getColorID() != Color.WHITE) { /* dead end! */
+								this.findWay(distance);
 							}
 						}
-					} 
+					}
 
 				}
 				break;
 
 			case Color.BLACK: // TODO: need to measure the color ID of the ground
-				
+
 				/*
 				 * The robot has drifted away from the white line
 				 */
-
+				// BrickScreen.showStringOnScreen("Black", 0, 1);
 				int arc = 0;
 				boolean found = false;
 				while (arc < 90 && !found) {
@@ -81,9 +91,12 @@ public class Labyrinth {
 				break;
 
 			case Color.BLUE:
+				// BrickScreen.showStringOnScreen("Blue", 0, 1);
 				if (this.beginLabyrinth == false && this.endLabyrinth == false) {
 					/* The robot arrives at the starting point */
 					this.beginLabyrinth = true;
+					this.robot.getDrive().travel(15);
+					this.robot.getDrive().turnRight(90);
 				} else if (this.beginLabyrinth == true && this.endLabyrinth == false) {
 					/* The robot arrives at the destination */
 					this.endLabyrinth = true;
@@ -94,7 +107,8 @@ public class Labyrinth {
 				/*
 				 * the robot runs on the white line, just go straight
 				 */
-				this.robot.getDrive().goForwardWithPilot();
+				// BrickScreen.showStringOnScreen("White", 0, 1);
+				this.robot.getDrive().goForwardWithMotors();
 				break;
 
 			default:
@@ -104,11 +118,11 @@ public class Labyrinth {
 
 		}
 	}
-	
+
 	private void findLine() {
 		boolean found = false;
 		while (!found) {
-			this.robot.getDrive().travel(7);
+			// this.robot.getDrive().travel(1);
 			int arc = 0;
 			while (arc < 90 && !found) {
 				this.robot.getDrive().turnRight(10);
@@ -116,16 +130,40 @@ public class Labyrinth {
 				arc += 10;
 			}
 			if (!found)
-				this.robot.getDrive().turnLeft(arc + 1);
+				this.robot.getDrive().turnLeft(arc + 30);
 		}
 	}
-	
-	private void findWay() {
-		this.robot.getDrive().travel(-5);
-		this.robot.getDrive().turnLeft(90);
-		this.robot.getDrive().travel(5);
-	}
-	
 
+	private void findWay(int distance) {
+		this.robot.getDrive().travel(-distance);
+		this.robot.getDrive().quickStop();
+		this.robot.getDrive().turnLeft(90);
+		this.robot.getDrive().travel(distance);
+		this.robot.getDrive().quickStop();
+
+	}
+
+	private void showColorIdOnScreen(int colorID) {
+		switch (colorID) {
+		case Color.BLACK:
+			BrickScreen.showStringOnScreen("Black", 0, 1);
+			break;
+		case Color.RED:
+			BrickScreen.showStringOnScreen("Red", 0, 1);
+			break;
+		case Color.BLUE:
+			BrickScreen.showStringOnScreen("Blue", 0, 1);
+			break;
+		case Color.WHITE:
+			BrickScreen.showStringOnScreen("White", 0, 1);
+			break;
+		default:
+			break;
+		}
+	}
+
+	private int getColorID() {
+		return (int) this.robot.getSensors().getColor();
+	}
 
 }
