@@ -190,7 +190,7 @@ public class LineFollower {
 
 		/* print the target speed of left and right motors on the brick's screen */
 		BrickScreen.show("L= " + leftTargetSpeed);
-		BrickScreen.show("L= " + rightTargetSpeed);
+		BrickScreen.show("R= " + rightTargetSpeed);
 //		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
 //		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
 
