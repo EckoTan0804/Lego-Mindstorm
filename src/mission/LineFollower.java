@@ -167,7 +167,7 @@ public class LineFollower {
 		this.robot.getDrive().turnLeft(90);
 		this.robot.getDrive().travel(40);
 		this.robot.getDrive().turnLeft(90);
-		this.robot.getDrive().travel(26);
+		this.robot.getDrive().travel(24);
 		this.robot.getDrive().turnRight(90);
 	}
 
