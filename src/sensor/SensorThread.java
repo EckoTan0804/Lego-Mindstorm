@@ -75,6 +75,10 @@ public class SensorThread implements Runnable {
 		this.sColor = sColor;
 	}
 	
+	public float[] getColorArray() {
+		return this.sColor.getSampleArray();
+	}
+	
 	
 	
 	
