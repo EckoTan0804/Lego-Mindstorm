@@ -2,6 +2,7 @@ package mission;
 
 import ev3Robot.Robot;
 import lejos.hardware.Button;
+import util.BrickScreen;
 
 public class Demo {
 
@@ -9,10 +10,12 @@ public class Demo {
 		Robot robot = new Robot();
 		robot.mainLoop();
 //		while (Button.ESCAPE.isUp()) {
-//			robot.getDrive().setMotorSpeed(-100, 100);
+//			robot.getDrive().setMotorSpeed(200, 200);
 //			robot.getDrive().goForwardWithMotors();
 //		}
-//		robot.getDrive().stopWithMotors();
+//		robot.getDrive().quickStop();
+//		BrickScreen.show("Stop!");
+//		System.exit(0);
 	}
 
 }
