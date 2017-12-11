@@ -69,7 +69,7 @@ public class Robot{
 	}
 	
 	public void changeSettingsForLabyrinth() {
-		this.sensors.setsColor(new SingleValueSensorWrapper(colorS, 0));
+		this.sensors.setsColor(new SingleValueSensorWrapper(colorS, 2));
 //		this.colorS.setCurrentMode("Color ID");
 	}
 	
