@@ -23,5 +23,9 @@ public class SingleValueSensorWrapper {
 		mode.fetchSample(samples, 0);
 		return samples[0];
 	}
+	
+	public float[] getSampleArray() {
+		return this.samples;
+	}
 
 }
