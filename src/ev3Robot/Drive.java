@@ -2,6 +2,7 @@ package ev3Robot;
 
 import lejos.robotics.RegulatedMotor;
 import lejos.robotics.navigation.DifferentialPilot;
+import util.BrickScreen;
 
 public class Drive {
 
@@ -144,6 +145,35 @@ public class Drive {
 		this.robot.getRightMotor().flt();
 	}
 	
+	public void adjustRobotMovement(float leftTargetSpeed, float rightTargetSpeed) {
+
+		/* print the target speed of left and right motors on the brick's screen */
+		BrickScreen.show("L= " + leftTargetSpeed);
+		BrickScreen.show("R= " + rightTargetSpeed);
+//		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
+//		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
+
+		robot.getLeftMotor().startSynchronization();
+		robot.getRightMotor().startSynchronization();
+
+		if (leftTargetSpeed < 0) {
+			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
+			robot.getLeftMotor().backward();
+		} else {
+			robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
+			robot.getLeftMotor().forward();
+		}
+		if (rightTargetSpeed < 0) {
+			robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
+			robot.getRightMotor().backward();
+		} else {
+			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
+			robot.getRightMotor().forward();
+		}
+
+		robot.getLeftMotor().endSynchronization();
+		robot.getRightMotor().endSynchronization();
+	}
 	
 
 }
