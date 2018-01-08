@@ -39,7 +39,7 @@ public class Labyrinth {
 			e.printStackTrace();
 		}
 
-		float speed = 200f; // TODO: need to adjust the speed
+		float speed = 150f; // TODO: need to adjust the speed
 		this.robot.getDrive().setMotorSpeed(speed, speed);
 		this.robot.getDrive().goForwardWithMotors();
 		float leftMotorSpeed = 0f;
@@ -61,12 +61,12 @@ public class Labyrinth {
 		
 			if (red > 15) {
 				if (red > 23 && green < 35 && blue < 23) {	 // red
-					this.robot.getDrive().travel(4);
+					this.robot.getDrive().travel(3);
 					this.robot.getDrive().turnRight(97);
 					BrickScreen.show("Red");	
 				} else {	 //white
-					leftMotorSpeed = 2.0f * speed;
-					rightMotorSpeed = 0.9f * speed;
+					leftMotorSpeed = 1.6f * speed;
+					rightMotorSpeed = 1.0f * speed;
 					BrickScreen.show("White");
 					this.adjustRobotMovement(robot, leftMotorSpeed, rightMotorSpeed);
 				}
@@ -77,8 +77,8 @@ public class Labyrinth {
 					BrickScreen.show("Blue");
 					this.adjustRobotMovement(robot, leftMotorSpeed, rightMotorSpeed);
 				} else {		//black
-					leftMotorSpeed = (float)(-0.4) * speed;
-					rightMotorSpeed = (float)1.0f * speed;
+					leftMotorSpeed = (float)(-0.5) * speed;
+					rightMotorSpeed = (float)1.1f * speed;
 					this.adjustRobotMovement(robot, leftMotorSpeed, rightMotorSpeed);
 					BrickScreen.show("Black");
 				}
