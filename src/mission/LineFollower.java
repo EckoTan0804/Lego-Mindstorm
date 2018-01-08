@@ -28,14 +28,14 @@ public class LineFollower {
 	 * Target power level, power level of both motors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 260f;
+	private final float Tp = 250f; 
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
 	 * controllers will try to get back to the line edge when it has drifted away
 	 * from it
 	 */
-	private final float Kp = (((Tp - 0) / (WHITE - offset)) * 1.1f);
+	private final float Kp = (((Tp - 0) / (WHITE - offset)) * 1.2f); 
 
 	/*
 	 * the constant for the Integral controller
