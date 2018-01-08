@@ -2,6 +2,7 @@ package mission;
 
 import ev3Robot.Robot;
 import lejos.hardware.Button;
+import lejos.hardware.Sound;
 import lejos.hardware.lcd.LCD;
 import lejos.robotics.Color;
 import util.BrickScreen;
@@ -42,9 +43,10 @@ public class Labyrinth {
 		float speed = 150f; // TODO: need to adjust the speed
 		this.robot.getDrive().setMotorSpeed(speed, speed);
 		this.robot.getDrive().goForwardWithMotors();
-		float leftMotorSpeed = 0f;
-		float rightMotorSpeed = 0f;
-
+		float leftTargetSpeed = 0f;
+		float rightTargetSpeed = 0f;
+		
+//		this.enterLabyrinth();
 		
 		while (Button.LEFT.isUp() && (!endLabyrinth)) {
 			
@@ -58,28 +60,39 @@ public class Labyrinth {
 			BrickScreen.show("r: " + red);
 			BrickScreen.show("g: " + green);
 			BrickScreen.show("b: " + blue);
-		
+
 			if (red > 15) {
 				if (red > 23 && green < 35 && blue < 23) {	 // red
 					this.robot.getDrive().travel(3);
 					this.robot.getDrive().turnRight(97);
 					BrickScreen.show("Red");	
 				} else {	 //white
-					leftMotorSpeed = 1.6f * speed;
-					rightMotorSpeed = 1.0f * speed;
+					leftTargetSpeed = 1.6f * speed;
+					rightTargetSpeed = 1.0f * speed;
 					BrickScreen.show("White");
-					this.adjustRobotMovement(robot, leftMotorSpeed, rightMotorSpeed);
+					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
 				}
 			} else {			//blue
-				if (blue > 16 && green <= 21) {
-					leftMotorSpeed = 0f;
-					rightMotorSpeed = 0f;
-					BrickScreen.show("Blue");
-					this.adjustRobotMovement(robot, leftMotorSpeed, rightMotorSpeed);
+				if (blue > 16 && green <= 23) {
+					
+					if (!this.beginLabyrinth) {
+						Sound.beep();
+						this.beginLabyrinth = true;
+						this.robot.getDrive().travel(15);
+						this.robot.getDrive().turnRight(90);
+					} else if (blue > 18) {
+						leftTargetSpeed = 0f;
+						rightTargetSpeed = 0f;
+						BrickScreen.show("Blue");
+						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+						this.endLabyrinth = true;
+						Sound.beepSequence();
+					}	
+					
 				} else {		//black
-					leftMotorSpeed = (float)(-0.5) * speed;
-					rightMotorSpeed = (float)1.1f * speed;
-					this.adjustRobotMovement(robot, leftMotorSpeed, rightMotorSpeed);
+					leftTargetSpeed = (float)(-0.5) * speed;
+					rightTargetSpeed = (float)1.1f * speed;
+					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
 					BrickScreen.show("Black");
 				}
 			}
@@ -117,6 +130,30 @@ public class Labyrinth {
 
 	private int getColor(float redVal, float greenVal, float blueVal) {
 		return 0;
+	}
+	
+	private void enterLabyrinth() {
+		float[] rgb = this.robot.getSensors().getColorArray();
+		float red = rgb[RED] * 255;
+		float green = rgb[GREEN] * 255;
+		float blue = rgb[BLUE] * 255;
+		
+		BrickScreen.show("r: " + red);
+		BrickScreen.show("g: " + green);
+		BrickScreen.show("b: " + blue);
+		
+		if (red > 15 && blue > 16 && green <= 21) { /* blue */
+			Sound.beep();
+			this.beginLabyrinth = true;
+			this.robot.getDrive().travel(15);
+			this.robot.getDrive().turnRight(90);
+		}
+		
+	}
+	
+	public void reset() {
+		this.beginLabyrinth = false;
+		this.endLabyrinth = false;
 	}
 
 
