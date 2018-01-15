@@ -120,7 +120,8 @@ public class LineFollower {
 					rightTargetSpeed = 1.2f * Tp;
 	 
 					/* adjust the robot's movement in order to make the robot follow the line */
-					this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
+//					this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
+					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 
 				} else if (sampleVal < BLACK + EPS) { /* special case: the robot reaches a line gap */
 
@@ -156,7 +157,8 @@ public class LineFollower {
 					rightTargetSpeed = Tp + turn;
 
 					/* adjust the robot's movement in order to make the robot follow the line */
-					this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
+//					this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
+					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 				}
 
 				/* update error */
@@ -183,7 +185,8 @@ public class LineFollower {
 						rightTargetSpeed = 1.3f * Tp;
 						leftTargetSpeed = 1.0f * Tp;
 						BrickScreen.show("White");
-						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+//						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+						this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 					}
 				} else {			//blue
 					if (blue > 16 && green <= 23) {
@@ -205,7 +208,8 @@ public class LineFollower {
 					} else {		//black
 						rightTargetSpeed = (float)(-0.5) * Tp;
 						leftTargetSpeed = (float)1.1f * Tp;
-						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+//						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+						this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 						BrickScreen.show("Black");
 					}
 				}
@@ -255,35 +259,35 @@ public class LineFollower {
 		}
 	}
 
-	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
-
-		/* print the target speed of left and right motors on the brick's screen */
-		BrickScreen.show("L= " + leftTargetSpeed);
-		BrickScreen.show("R= " + rightTargetSpeed);
-//		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
-//		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
-
-		robot.getLeftMotor().startSynchronization();
-		robot.getRightMotor().startSynchronization();
-
-		if (leftTargetSpeed < 0) {
-			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
-			robot.getLeftMotor().backward();
-		} else {
-			robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
-			robot.getLeftMotor().forward();
-		}
-		if (rightTargetSpeed < 0) {
-			robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
-			robot.getRightMotor().backward();
-		} else {
-			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
-			robot.getRightMotor().forward();
-		}
-
-		robot.getLeftMotor().endSynchronization();
-		robot.getRightMotor().endSynchronization();
-	}
+//	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
+//
+//		/* print the target speed of left and right motors on the brick's screen */
+//		BrickScreen.show("L= " + leftTargetSpeed);
+//		BrickScreen.show("R= " + rightTargetSpeed);
+////		LCD.drawString("L= " + leftTargetSpeed, 0, 2);
+////		LCD.drawString("R= " + rightTargetSpeed, 0, 3);
+//
+//		robot.getLeftMotor().startSynchronization();
+//		robot.getRightMotor().startSynchronization();
+//
+//		if (leftTargetSpeed < 0) {
+//			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
+//			robot.getLeftMotor().backward();
+//		} else {
+//			robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
+//			robot.getLeftMotor().forward();
+//		}
+//		if (rightTargetSpeed < 0) {
+//			robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
+//			robot.getRightMotor().backward();
+//		} else {
+//			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
+//			robot.getRightMotor().forward();
+//		}
+//
+//		robot.getLeftMotor().endSynchronization();
+//		robot.getRightMotor().endSynchronization();
+//	}
 	
 	public void fromLineFollowerToLabyrinth() {
 		this.robot.getDrive().setSpeed(200);
@@ -297,8 +301,8 @@ public class LineFollower {
 		BrickScreen.show("g: " + green);
 		BrickScreen.show("b: " + blue);
 		
-		while (red > 15 && !(blue > 16 && green <= 23)) {
-			this.robot.getDrive().goForwardWithMotors();
-		}
+		
+		
+
 	}
 }

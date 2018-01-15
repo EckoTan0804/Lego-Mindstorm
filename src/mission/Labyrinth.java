@@ -70,7 +70,8 @@ public class Labyrinth {
 					leftTargetSpeed = 1.6f * speed;
 					rightTargetSpeed = 1.0f * speed;
 					BrickScreen.show("White");
-					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+//					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 				}
 			} else {			//blue
 				if (blue > 16 && green <= 23) {
@@ -84,7 +85,8 @@ public class Labyrinth {
 						leftTargetSpeed = 0f;
 						rightTargetSpeed = 0f;
 						BrickScreen.show("Blue");
-						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+//						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+						this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 						this.endLabyrinth = true;
 						Sound.beepSequence();
 					}	
@@ -92,7 +94,8 @@ public class Labyrinth {
 				} else {		//black
 					leftTargetSpeed = (float)(-0.5) * speed;
 					rightTargetSpeed = (float)1.1f * speed;
-					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+//					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 					BrickScreen.show("Black");
 				}
 			}
@@ -100,33 +103,33 @@ public class Labyrinth {
 		}
 	}
 	
-	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
-
-		/* print the target speed of left and right motors on the brick's screen */
-		BrickScreen.show("L= " + leftTargetSpeed);
-		BrickScreen.show("R= " + rightTargetSpeed);
-
-		robot.getLeftMotor().startSynchronization();
-		robot.getRightMotor().startSynchronization();
-
-		if (leftTargetSpeed < 0) {
-			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
-			robot.getLeftMotor().backward();
-		} else {
-			robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
-			robot.getLeftMotor().forward();
-		}
-		if (rightTargetSpeed < 0) {
-			robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
-			robot.getRightMotor().backward();
-		} else {
-			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
-			robot.getRightMotor().forward();
-		}
-
-		robot.getLeftMotor().endSynchronization();
-		robot.getRightMotor().endSynchronization();
-	}
+//	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
+//
+//		/* print the target speed of left and right motors on the brick's screen */
+//		BrickScreen.show("L= " + leftTargetSpeed);
+//		BrickScreen.show("R= " + rightTargetSpeed);
+//
+//		robot.getLeftMotor().startSynchronization();
+//		robot.getRightMotor().startSynchronization();
+//
+//		if (leftTargetSpeed < 0) {
+//			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
+//			robot.getLeftMotor().backward();
+//		} else {
+//			robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
+//			robot.getLeftMotor().forward();
+//		}
+//		if (rightTargetSpeed < 0) {
+//			robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
+//			robot.getRightMotor().backward();
+//		} else {
+//			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
+//			robot.getRightMotor().forward();
+//		}
+//
+//		robot.getLeftMotor().endSynchronization();
+//		robot.getRightMotor().endSynchronization();
+//	}
 
 	private int getColor(float redVal, float greenVal, float blueVal) {
 		return 0;
