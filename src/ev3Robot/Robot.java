@@ -73,6 +73,10 @@ public class Robot{
 //		this.colorS.setCurrentMode("Color ID");
 	}
 	
+	public void changeSettingsForLineFollower() {
+		this.sensors.setsColor(new SingleValueSensorWrapper(colorS, "Red"));
+	}
+	
 	public int getColorID() {
 		return this.colorS.getColorID();
 	}
