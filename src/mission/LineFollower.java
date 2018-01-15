@@ -17,6 +17,14 @@ import util.BrickScreen;
  *
  */
 public class LineFollower {
+	
+	private boolean endLineFollower = false;
+	
+	/**
+	 * <li>true, if the color sensor is in "Red" mode <br>
+	 * <li>false, if the color sensor is in "RGB" mode
+	 */
+	private boolean useRedMode = true;
 
 	private final float BLACK = 0.05f;
 	private final float WHITE = 0.33f;
@@ -70,91 +78,149 @@ public class LineFollower {
 	public void startLineFollowing() {
 
 		Sound.beep();
+		
+		this.robot.changeSettingsForLineFollower();
 
 		this.robot.getDrive().setMotorSpeed(Tp, Tp);
 		this.robot.getDrive().goForwardWithMotors();
 
-		while (Button.LEFT.isUp()) { /* stop the routine and back to the main menu if LEFT is pressed */
-
-			BrickScreen.clearScreen();
-			BrickScreen.show(Mission.LINE_FOLLOWING.getMission());
-			// LCD.clear();
-			// LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
-
+		while (Button.LEFT.isUp() && !this.endLineFollower) { /* stop the routine and back to the main menu if LEFT is pressed */
+			
 			float leftTargetSpeed = 0;
 			float rightTargetSpeed = 0;
-			float error = 0;
+			
+			if (useRedMode) { /* The color sensor use "RED" mode to follow line*/
+				BrickScreen.clearScreen();
+				BrickScreen.show(Mission.LINE_FOLLOWING.getMission());
+				// LCD.clear();
+				// LCD.drawString(Mission.LINE_FOLLOWING.getMission(), 0, 0);
 
-			/* get the real time sample value measured by color sensor */
+//				float leftTargetSpeed = 0;
+//				float rightTargetSpeed = 0;
+				float error = 0;
 
-			float sampleVal = this.robot.getSensors().getColor();
-			BrickScreen.show("color = " + sampleVal);
-			BrickScreen.show("TS1 = " + this.robot.getSensors().getTouch1());
-			BrickScreen.show("TS2 = " + this.robot.getSensors().getTouch2());
-			// LCD.drawString("color = " + sampleVal, 0, 1);
-			// LCD.drawString("TS1 = " + this.robot.getSensors().getTouch1(), 0, 5);
-			// LCD.drawString("TS2 = " + this.robot.getSensors().getTouch2(), 0, 6);
+				/* get the real time sample value measured by color sensor */
 
-			if ((this.robot.getSensors().getTouch1()) > 0.2 && (this.robot.getSensors().getTouch2()) > 0.2) {
-				/* special case: the robot reaches an obstacle */
-				overObstacle();
+				float sampleVal = this.robot.getSensors().getColor();
+				BrickScreen.show("color = " + sampleVal);
+				BrickScreen.show("TS1 = " + this.robot.getSensors().getTouch1());
+				BrickScreen.show("TS2 = " + this.robot.getSensors().getTouch2());
+				// LCD.drawString("color = " + sampleVal, 0, 1);
+				// LCD.drawString("TS1 = " + this.robot.getSensors().getTouch1(), 0, 5);
+				// LCD.drawString("TS2 = " + this.robot.getSensors().getTouch2(), 0, 6);
 
-			} else if (sampleVal > WHITE - 2 * EPS) { /* special case: the robot need to do a 90 degree rotation */
+				if ((this.robot.getSensors().getTouch1()) > 0.2 && (this.robot.getSensors().getTouch2()) > 0.2) {
+					/* special case: the robot reaches an obstacle */
+					overObstacle();
 
-				// this.robot.getDrive().stopWithMotors();
-				leftTargetSpeed = -1.2f * Tp;
-				rightTargetSpeed = 1.2f * Tp;
- 
-				/* adjust the robot's movement in order to make the robot follow the line */
-				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
+				} else if (sampleVal > WHITE - 2 * EPS) { /* special case: the robot need to do a 90 degree rotation */
 
-			} else if (sampleVal < BLACK + EPS) { /* special case: the robot reaches a line gap */
+					// this.robot.getDrive().stopWithMotors();
+					leftTargetSpeed = -1.2f * Tp;
+					rightTargetSpeed = 1.2f * Tp;
+	 
+					/* adjust the robot's movement in order to make the robot follow the line */
+					this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 
-				// this.robot.getDrive().stopWithMotors();
+				} else if (sampleVal < BLACK + EPS) { /* special case: the robot reaches a line gap */
 
-				int arc = 0;
-				boolean found = false;
-				while (arc < 90 && !found) {
-					this.robot.getDrive().turnRight(10);
-					found = this.robot.getSensors().getColor() >= offset + 2 * EPS;
-					arc += 10;
+					// this.robot.getDrive().stopWithMotors();
+
+					int arc = 0;
+					boolean found = false;
+					while (arc < 90 && !found) {
+						this.robot.getDrive().turnRight(10);
+						found = this.robot.getSensors().getColor() >= offset + 2 * EPS;
+						arc += 10;
+					}
+
+					if (!found) {
+						this.robot.getDrive().turnLeft(arc + 10);
+						findLine();
+					}
+
+				} else { /* normal case */
+
+					/* calculate turn, based on the sample value */
+					error = sampleVal - offset;
+					integral = integral + error;
+					derivative = error - lastError;
+					// float turn = Kp * error + Ki * integral + Kd * derivative;
+					float turn = Kp * error; /* only a P-controller will be used. */
+
+					/*
+					 * adjust the power of left and right motors in order to make the robot follow
+					 * the line
+					 */
+					leftTargetSpeed = Tp - turn;
+					rightTargetSpeed = Tp + turn;
+
+					/* adjust the robot's movement in order to make the robot follow the line */
+					this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 				}
 
-				if (!found) {
-					this.robot.getDrive().turnLeft(arc + 10);
-					findLine();
+				/* update error */
+				this.lastError = error;
+
+				
+			} else { /* The color sensor use "RGB" mode to follow line */
+				
+				float[] rgb = this.robot.getSensors().getColorArray();
+				float red = rgb[0] * 255;
+				float green = rgb[1] * 255;
+				float blue = rgb[2] * 255;
+				
+				BrickScreen.show("r: " + red);
+				BrickScreen.show("g: " + green);
+				BrickScreen.show("b: " + blue);
+
+				if (red > 15) {
+					if (red > 23 && green < 35 && blue < 23) {	 // red
+						BrickScreen.show("Red");	
+						this.endLineFollower = true;
+						
+					} else {	 //white
+						rightTargetSpeed = 1.3f * Tp;
+						leftTargetSpeed = 1.0f * Tp;
+						BrickScreen.show("White");
+						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+					}
+				} else {			//blue
+					if (blue > 16 && green <= 23) {
+						
+//						if (!this.beginLabyrinth) {
+//							Sound.beep();
+//							this.beginLabyrinth = true;
+//							this.robot.getDrive().travel(15);
+//							this.robot.getDrive().turnRight(90);
+//						} else if (blue > 18) {
+//							leftTargetSpeed = 0f;
+//							rightTargetSpeed = 0f;
+//							BrickScreen.show("Blue");
+//							this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+//							this.endLabyrinth = true;
+//							Sound.beepSequence();
+//						}	
+						
+					} else {		//black
+						rightTargetSpeed = (float)(-0.5) * Tp;
+						leftTargetSpeed = (float)1.1f * Tp;
+						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
+						BrickScreen.show("Black");
+					}
 				}
-
-			} else { /* normal case */
-
-				/* calculate turn, based on the sample value */
-				error = sampleVal - offset;
-				integral = integral + error;
-				derivative = error - lastError;
-				// float turn = Kp * error + Ki * integral + Kd * derivative;
-				float turn = Kp * error; /* only a P-controller will be used. */
-
-				/*
-				 * adjust the power of left and right motors in order to make the robot follow
-				 * the line
-				 */
-				leftTargetSpeed = Tp - turn;
-				rightTargetSpeed = Tp + turn;
-
-				/* adjust the robot's movement in order to make the robot follow the line */
-				this.adjustRobotMovement(this.robot, leftTargetSpeed, rightTargetSpeed);
 			}
-
-			/* update error */
-			this.lastError = error;
-
+			
 			try {
 				Thread.sleep(20);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
+			
 		}
 
+		this.fromLineFollowerToLabyrinth();
+		
 		Sound.beepSequence();
 		LCD.clear();
 		this.robot.getDrive().stopWithMotors();
@@ -168,7 +234,10 @@ public class LineFollower {
 		this.robot.getDrive().travel(40);
 		this.robot.getDrive().turnLeft(90);
 		this.robot.getDrive().travel(24);
-		this.robot.getDrive().turnRight(90);
+//		this.robot.getDrive().turnRight(90);
+		
+		this.robot.changeSettingsForLabyrinth();
+		this.useRedMode = false;
 	}
 
 	private void findLine() {
@@ -214,5 +283,22 @@ public class LineFollower {
 
 		robot.getLeftMotor().endSynchronization();
 		robot.getRightMotor().endSynchronization();
+	}
+	
+	public void fromLineFollowerToLabyrinth() {
+		this.robot.getDrive().setSpeed(200);
+		
+		float[] rgb = this.robot.getSensors().getColorArray();
+		float red = rgb[0] * 255;
+		float green = rgb[1] * 255;
+		float blue = rgb[2] * 255;
+		
+		BrickScreen.show("r: " + red);
+		BrickScreen.show("g: " + green);
+		BrickScreen.show("b: " + blue);
+		
+		while (red > 15 && !(blue > 16 && green <= 23)) {
+			this.robot.getDrive().goForwardWithMotors();
+		}
 	}
 }
