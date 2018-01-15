@@ -3,6 +3,7 @@ package ev3Robot;
 import lejos.hardware.Button;
 import lejos.hardware.lcd.LCD;
 import lejos.hardware.motor.EV3LargeRegulatedMotor;
+import lejos.hardware.motor.EV3MediumRegulatedMotor;
 import lejos.hardware.port.MotorPort;
 import lejos.hardware.port.Port;
 import lejos.hardware.port.SensorPort;
@@ -23,6 +24,7 @@ public class Robot{
 	private final double WHEEL_DIAMETER = 3.2d; // unit:cm
 	private final double TRACK_WIDTH = 11d; // unit: cm
 	private final Port LEFT_MOTOR = MotorPort.A;
+	private final Port MEDIUM_MOTOR = MotorPort.C;
 	private final Port RIGHT_MOTOR = MotorPort.D;
 
 	private static final Port COLOR_SENSOR = SensorPort.S1;
@@ -40,6 +42,7 @@ public class Robot{
 
 	private EV3LargeRegulatedMotor leftMotor;
 	private EV3LargeRegulatedMotor rightMotor;
+	private EV3MediumRegulatedMotor mediumMotor;
 
 	private Drive drive;
 
@@ -47,6 +50,7 @@ public class Robot{
 
 		this.leftMotor = new EV3LargeRegulatedMotor(LEFT_MOTOR);
 		this.rightMotor = new EV3LargeRegulatedMotor(RIGHT_MOTOR);
+		this.mediumMotor = new EV3MediumRegulatedMotor(MEDIUM_MOTOR);
 
 		SingleValueSensorWrapper color = new SingleValueSensorWrapper(colorS, "Red");
 		SingleValueSensorWrapper touch1 = new SingleValueSensorWrapper(touchS1, "Touch");
@@ -130,5 +134,15 @@ public class Robot{
 	public void setDrive(Drive drive) {
 		this.drive = drive;
 	}
+
+	public EV3MediumRegulatedMotor getMediumMotor() {
+		return mediumMotor;
+	}
+
+	public void setMediumMotor(EV3MediumRegulatedMotor mediumMotor) {
+		this.mediumMotor = mediumMotor;
+	}
+	
+	
 
 }
