@@ -72,14 +72,25 @@ public class MissionMenu extends TextMenu {
 				ColorSearch color_search = new ColorSearch(robot);
 				color_search.startColorSearch();
 				break;
+				
+			case MissionMenu.MENU_ITEM_BRIDGE:
+
+				BrickScreen.clearScreen();
+//				LCD.drawString(Mission.BRIDGE.getMission(), 0, 0);
+				
+				Bridge bridge = new Bridge(robot);
+				bridge.startBridge();
+				
+				/* bridge routine will be executed */
+				break;
 
 			default:
 				
 				BrickScreen.clearScreen();
 //				LCD.drawString(Mission.BRIDGE.getMission(), 0, 0);
+
 				
 				/* bridge routine will be executed */
-				break;
 			}
 
 			Thread.sleep(20);
