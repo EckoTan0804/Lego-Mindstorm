@@ -53,6 +53,7 @@ public class MissionMenu extends TextMenu {
 
 				/* labyrinth routine will be executed */
 				Labyrinth labyrinth = new Labyrinth(robot);
+				labyrinth.reset();
 				labyrinth.startLabyrinth();
 				break;
 
