@@ -2,7 +2,7 @@ package mission;
 
 public enum Mission {
 	LINE_FOLLOWING("Line following"), LABYRINTH("Labyrinth"), OBSTACLE_SHIFTING("Obstacle shifting"), BRIDGE("Bridge"),
-	COLOR_SEARCH("ColorSearch");
+	COLOR_SEARCH("ColorSearch"), PARKOUR("Parkour");
 
 	private String mission;
 
@@ -20,7 +20,7 @@ public enum Mission {
 
 	public static String[] getMissionStringList() {
 		String[] missonStringList = { LINE_FOLLOWING.getMission(), LABYRINTH.getMission(),
-				OBSTACLE_SHIFTING.getMission(), BRIDGE.getMission(), COLOR_SEARCH.getMission() };
+				OBSTACLE_SHIFTING.getMission(), BRIDGE.getMission(), COLOR_SEARCH.getMission(), PARKOUR.getMission()};
 		return missonStringList;
 	}
 
