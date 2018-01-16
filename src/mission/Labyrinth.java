@@ -12,15 +12,10 @@ public class Labyrinth {
 	private final int RED = 0;
 	private final int GREEN = 1;
 	private final int BLUE = 2;
-	private final int WHITE = 3;
-	private final int BLACK = 4;
-	
-	
+		
 	private Robot robot;
 	private boolean beginLabyrinth = false;
 	private boolean endLabyrinth = false;
-	
-	
 
 	public Labyrinth(Robot robot) {
 		super();
@@ -36,7 +31,6 @@ public class Labyrinth {
 		try {
 			Thread.sleep(20);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -46,16 +40,16 @@ public class Labyrinth {
 		float leftTargetSpeed = 0f;
 		float rightTargetSpeed = 0f;
 		
-//		this.enterLabyrinth();
+		this.enterLabyrinth();
 		
 		while (Button.LEFT.isUp() && (!endLabyrinth)) {
 			
 			BrickScreen.clearScreen();
 			
-			float[] rgb = this.robot.getSensors().getColorArray();
-			float red = rgb[RED] * 255;
-			float green = rgb[GREEN] * 255;
-			float blue = rgb[BLUE] * 255;
+			float[] rgb = this.getColorArrayInRgbMode();
+			float red = rgb[RED];
+			float green = rgb[GREEN];
+			float blue = rgb[BLUE];
 			
 			BrickScreen.show("r: " + red);
 			BrickScreen.show("g: " + green);
@@ -66,16 +60,15 @@ public class Labyrinth {
 					this.robot.getDrive().travel(3);
 					this.robot.getDrive().turnRight(97);
 					BrickScreen.show("Red");	
+					
 				} else {	 //white
 					leftTargetSpeed = 1.6f * speed;
 					rightTargetSpeed = 1.0f * speed;
 					BrickScreen.show("White");
-//					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
 					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 				}
 			} else {			//blue
 				if (blue > 16 && green <= 23) {
-					
 					if (!this.beginLabyrinth) {
 						Sound.beep();
 						this.beginLabyrinth = true;
@@ -85,16 +78,13 @@ public class Labyrinth {
 						leftTargetSpeed = 0f;
 						rightTargetSpeed = 0f;
 						BrickScreen.show("Blue");
-//						this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
 						this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 						this.endLabyrinth = true;
-						Sound.beepSequence();
+						Sound.beepSequenceUp();
 					}	
-					
 				} else {		//black
 					leftTargetSpeed = (float)(-0.5) * speed;
 					rightTargetSpeed = (float)1.1f * speed;
-//					this.adjustRobotMovement(robot, leftTargetSpeed, rightTargetSpeed);
 					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 					BrickScreen.show("Black");
 				}
@@ -103,43 +93,11 @@ public class Labyrinth {
 		}
 	}
 	
-//	private void adjustRobotMovement(Robot robot, float leftTargetSpeed, float rightTargetSpeed) {
-//
-//		/* print the target speed of left and right motors on the brick's screen */
-//		BrickScreen.show("L= " + leftTargetSpeed);
-//		BrickScreen.show("R= " + rightTargetSpeed);
-//
-//		robot.getLeftMotor().startSynchronization();
-//		robot.getRightMotor().startSynchronization();
-//
-//		if (leftTargetSpeed < 0) {
-//			robot.getDrive().setLeftMotorSpeed(-leftTargetSpeed);
-//			robot.getLeftMotor().backward();
-//		} else {
-//			robot.getDrive().setLeftMotorSpeed(leftTargetSpeed);
-//			robot.getLeftMotor().forward();
-//		}
-//		if (rightTargetSpeed < 0) {
-//			robot.getDrive().setRightMotorSpeed(-rightTargetSpeed);
-//			robot.getRightMotor().backward();
-//		} else {
-//			robot.getDrive().setRightMotorSpeed(rightTargetSpeed);
-//			robot.getRightMotor().forward();
-//		}
-//
-//		robot.getLeftMotor().endSynchronization();
-//		robot.getRightMotor().endSynchronization();
-//	}
-
-	private int getColor(float redVal, float greenVal, float blueVal) {
-		return 0;
-	}
-	
 	private void enterLabyrinth() {
-		float[] rgb = this.robot.getSensors().getColorArray();
-		float red = rgb[RED] * 255;
-		float green = rgb[GREEN] * 255;
-		float blue = rgb[BLUE] * 255;
+		float[] rgb = this.getColorArrayInRgbMode();
+		float red = rgb[RED];
+		float green = rgb[GREEN];
+		float blue = rgb[BLUE];
 		
 		BrickScreen.show("r: " + red);
 		BrickScreen.show("g: " + green);
@@ -154,11 +112,41 @@ public class Labyrinth {
 		
 	}
 	
+	private float[] getColorArrayInRgbMode() {
+		float[] rgb = this.robot.getSensors().getColorArray();
+		for (int i = 0; i < rgb.length; i++) {
+			rgb[i] *= 255;
+		}
+		return rgb;
+	}
+	
 	public void reset() {
 		this.beginLabyrinth = false;
 		this.endLabyrinth = false;
 	}
 
+	public Robot getRobot() {
+		return robot;
+	}
 
+	public void setRobot(Robot robot) {
+		this.robot = robot;
+	}
+
+	public boolean isBeginLabyrinth() {
+		return beginLabyrinth;
+	}
+
+	public void setBeginLabyrinth(boolean beginLabyrinth) {
+		this.beginLabyrinth = beginLabyrinth;
+	}
+
+	public boolean isEndLabyrinth() {
+		return endLabyrinth;
+	}
+
+	public void setEndLabyrinth(boolean endLabyrinth) {
+		this.endLabyrinth = endLabyrinth;
+	}
 
 }
