@@ -299,6 +299,7 @@ public class LineFollower {
 	}
 
 	private boolean isBlueInRgbMode(float[] colorArray) {
-		return colorArray[0] <= 15 && colorArray[1] <= 23 && colorArray[2] > 16;
+		//return colorArray[0] <= 15 && colorArray[1] <= 23 && colorArray[2] > 16;
+		return colorArray[2] >= 10;
 	}
 }

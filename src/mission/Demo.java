@@ -14,7 +14,7 @@ public class Demo {
 //			robot.getDrive().goForwardWithMotors();
 //		}
 //		robot.getDrive().quickStop();
-//		BrickScreen.show("Stop!");
+//		BrickScreen.show("Stop!"); 
 //		System.exit(0);
 	}
 

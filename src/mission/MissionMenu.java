@@ -80,8 +80,8 @@ public class MissionMenu extends TextMenu {
 				
 				
 				break;
-
-			default:
+				
+			case MissionMenu.MENU_ITEM_PARKOUR:
 				
 				BrickScreen.clearScreen();
 				
@@ -93,6 +93,10 @@ public class MissionMenu extends TextMenu {
 				labyrinth.fromLabyrinthToBridge();
 				bridge.startBridge();
 				colorSearch.startColorSearch();
+				
+
+			default:
+				
 			}
 
 			Thread.sleep(20);
