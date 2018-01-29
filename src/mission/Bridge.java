@@ -10,9 +10,8 @@ public class Bridge {
 	private final int RED = 0;
 	private final int GREEN = 1;
 	private final int BLUE = 2;
-	private final float Tp1 = 200f;
-	private final float Tp2 = 200f;
-	private final float disToGround = 0.15f;
+	private final float Tp = 300f;
+	private final float disToGround = 0.07f;
 	
 	
 	private Robot robot;
@@ -30,7 +29,7 @@ public class Bridge {
 
 		this.robot.changeSettingsForLabyrinth();
 		
-		this.robot.getMediumMotor().rotate(-75);
+		this.robot.getMediumMotor().rotate(-70);
 
 		try {
 			Thread.sleep(20); 
@@ -38,10 +37,8 @@ public class Bridge {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		boolean flag = false;
-		
-		float speed = Tp1; // TODO: need to adjust the speed
+
+		float speed = Tp; // TODO: need to adjust the speed
 		this.robot.getDrive().setMotorSpeed(speed, speed);
 		this.robot.getDrive().goForwardWithMotors();
 		float leftTargetSpeed = 0f;
@@ -52,12 +49,11 @@ public class Bridge {
 			BrickScreen.clearScreen();
 			
 			float[] rgb = this.robot.getSensors().getColorArray();
+			float red = rgb[RED] * 255;
+			float green = rgb[GREEN] * 255;
 			float blue = rgb[BLUE] * 255;
 			
-			BrickScreen.show("b: " + blue);
-			
-			if (blue >= 10) {
-				flag = true;
+			if (red <= 15 && blue > 16 && green <= 23) {
 				break;
 			}	
 			
@@ -65,22 +61,18 @@ public class Bridge {
 			BrickScreen.show("dis: " + dis);
 			
 			if (dis > disToGround) {
-				leftTargetSpeed = -1.2f * Tp2;
-				rightTargetSpeed = Tp2;
+				leftTargetSpeed = -1.2f * Tp;
+				rightTargetSpeed = Tp;
 			} else {
-				leftTargetSpeed = 1.3f * Tp1;
-				rightTargetSpeed = Tp1;
+				leftTargetSpeed = 1.5f * Tp;
+				rightTargetSpeed = Tp;
 			}
 			
 			this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 			
 		}
-		
-		if (flag) {
-			this.robot.getMediumMotor().rotate(-10);
-		} else {
-			this.robot.getMediumMotor().rotate(75);
-		}
+
+		this.robot.getMediumMotor().rotate(70);
 		this.robot.getDrive().stopWithMotors();
 	}
 
