@@ -112,7 +112,7 @@ public class ColorSearch {
 			this.robot.getDrive().travel(-disF);
 			this.robot.getDrive().rotate(turnL * 105);
 			this.robot.getDrive().travel(1.5 * disF);
-			this.robot.getDrive().rotate(turnL * 95);
+			this.robot.getDrive().rotate(turnL * 98);
 			this.robot.getDrive().goForwardWithMotors();
 			turnL = - turnL;
 	}
