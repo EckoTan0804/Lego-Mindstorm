@@ -1,4 +1,5 @@
 # Lego2017
 
-Lego_001
-Montag 09:00 ~ 13:00
++ Lego set: MINDSTORMS EV3
++ language: Java
++ IDE: Eclipse + Lejos EV3 plugin
