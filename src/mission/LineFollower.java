@@ -36,7 +36,7 @@ public class LineFollower {
 	 * Target power level, power level of both motors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 250f;
+	private final float Tp = 220f;
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
@@ -123,7 +123,7 @@ public class LineFollower {
 						this.robot.getDrive().turnLeft(arc + 10);
 						findLine();
 					}
-
+ 
 				} else { /* normal case */
 
 					/* calculate turn, based on the sample value */
@@ -204,11 +204,11 @@ public class LineFollower {
 		
 		this.robot.getDrive().travel(-3);
 		this.robot.getDrive().turnRight(90);
-		this.robot.getDrive().travel(25);
+		this.robot.getDrive().travel(26);
 		this.robot.getDrive().turnLeft(90);
 		this.robot.getDrive().travel(36);
 		this.robot.getDrive().turnLeft(90);
-		this.robot.getDrive().travel(23);
+		this.robot.getDrive().travel(22);
 		// this.robot.getDrive().turnRight(90);
 
 		this.robot.changeSettingsForLabyrinth();
@@ -221,7 +221,7 @@ public class LineFollower {
 	private void findLine() {
 		boolean found = false;
 		while (!found) {
-			this.robot.getDrive().travel(8);
+			this.robot.getDrive().travel(9);
 			int arc = 0;
 			while (arc < 90 && !found) {
 				this.robot.getDrive().turnRight(10);
@@ -229,7 +229,7 @@ public class LineFollower {
 				arc += 10;
 			}
 			if (!found)
-				// this.robot.getDrive().turnLeft(arc + 1);
+				 //this.robot.getDrive().turnLeft(arc + 1);
 				this.robot.getDrive().turnLeft(arc);
 		}
 	}
@@ -240,21 +240,24 @@ public class LineFollower {
 
 		BrickScreen.clearScreen();
 
-		float[] rgb = this.getColorArrayInRgbMode();
-
-		float red = rgb[0];
-		float green = rgb[1];
-		float blue = rgb[2];
-
-		BrickScreen.show("r: " + red);
-		BrickScreen.show("g: " + green);
-		BrickScreen.show("b: " + blue);
-
 		float speed = 300f;
 
-		while (Button.LEFT.isUp() || !this.isBlueInRgbMode(rgb)) {
+		while (Button.LEFT.isUp()) {
 
 			BrickScreen.clearScreen();
+
+			float[] rgb = this.getColorArrayInRgbMode();
+
+			float red = rgb[0];
+			float green = rgb[1];
+			float blue = rgb[2];
+
+			BrickScreen.show("r: " + red);
+			BrickScreen.show("g: " + green);
+			BrickScreen.show("b: " + blue);
+			
+			if (this.isBlueInRgbMode(rgb)) 
+				break;
 
 			/* The standard distance to the wall is about 17.4 cm. */
 			float dist = this.robot.getSensors().getDistance() * 100;
@@ -299,7 +302,7 @@ public class LineFollower {
 	}
 
 	private boolean isBlueInRgbMode(float[] colorArray) {
-		//return colorArray[0] <= 15 && colorArray[1] <= 23 && colorArray[2] > 16;
-		return colorArray[2] >= 10;
+		return colorArray[0] <= 15 && colorArray[1] <= 23 && colorArray[2] > 16;
+		//return colorArray[2] >= 10;
 	}
 }

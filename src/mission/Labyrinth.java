@@ -49,10 +49,11 @@ public class Labyrinth {
 
 			BrickScreen.clearScreen();
 
-			float[] rgb = this.getColorArrayInRgbMode();
-			float red = rgb[RED];
-			float green = rgb[GREEN];
-			float blue = rgb[BLUE];
+			//float[] rgb = this.getColorArrayInRgbMode();
+			float[] rgb = this.robot.getSensors().getColorArray();
+			float red = rgb[RED] * 255;
+			float green = rgb[GREEN] * 255;
+			float blue = rgb[BLUE] * 255;
 
 			BrickScreen.show("r: " + red);
 			BrickScreen.show("g: " + green);
@@ -65,7 +66,7 @@ public class Labyrinth {
 					BrickScreen.show("Red");
 
 				} else { // white
-					leftTargetSpeed = 1.6f * speed;
+					leftTargetSpeed = 1.8f * speed;
 					rightTargetSpeed = 1.0f * speed;
 					BrickScreen.show("White");
 					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
@@ -76,8 +77,9 @@ public class Labyrinth {
 						Sound.beep();
 						this.beginLabyrinth = true;
 						this.robot.getDrive().travel(15);
-						this.robot.getDrive().turnRight(90);
-					} else if (blue > 18) { // TODO: the parameter should be adjusted and make sure that it won't go
+						this.robot.getDrive().turnRight(95);
+					}
+					if (blue > 19) { // TODO: the parameter should be adjusted and make sure that it won't go
 											// wrong
 						leftTargetSpeed = 0f;
 						rightTargetSpeed = 0f;
@@ -87,7 +89,7 @@ public class Labyrinth {
 						Sound.beepSequenceUp();
 					}
 				} else { // black
-					leftTargetSpeed = (float) (-0.5) * speed;
+					leftTargetSpeed = (float) (-1.0) * speed;
 					rightTargetSpeed = (float) 1.1f * speed;
 					this.robot.getDrive().adjustRobotMovement(leftTargetSpeed, rightTargetSpeed);
 					BrickScreen.show("Black");
@@ -101,30 +103,35 @@ public class Labyrinth {
 
 	private void enterLabyrinth() {
 
-		float[] rgb = this.getColorArrayInRgbMode();
-		float red = rgb[RED];
-		float green = rgb[GREEN];
-		float blue = rgb[BLUE];
-
-		BrickScreen.show("r: " + red);
-		BrickScreen.show("g: " + green);
-		BrickScreen.show("b: " + blue);
-
-		if (red > 15 && blue > 16 && green <= 21) { /* blue */
-			Sound.beep();
-			this.beginLabyrinth = true;
-			this.robot.getDrive().travel(15);
-			this.robot.getDrive().turnRight(90);
-		}
+		//float[] rgb = this.getColorArrayInRgbMode();
+//		float[] rgb = this.robot.getSensors().getColorArray();
+//		float red = rgb[RED] * 255;
+//		float green = rgb[GREEN] * 255;
+//		float blue = rgb[BLUE] * 255;
+//
+//		BrickScreen.show("r: " + red);
+//		BrickScreen.show("g: " + green);
+//		BrickScreen.show("b: " + blue);
+//
+//		if (red > 15 && blue > 16 && green <= 21) { /* blue */
+//			Sound.beep();
+//			this.beginLabyrinth = true;
+//			this.robot.getDrive().travel(13);
+//			this.robot.getDrive().turnRight(95);
+//		}
+		
+		this.beginLabyrinth = true;
+		this.robot.getDrive().travel(15);
+		this.robot.getDrive().turnRight(95);
 	}
 
-	private float[] getColorArrayInRgbMode() {
-		float[] rgb = this.robot.getSensors().getColorArray();
-		for (int i = 0; i < rgb.length; i++) {
-			rgb[i] *= 255;
-		}
-		return rgb;
-	}
+	//private float[] getColorArrayInRgbMode() {
+	//	float[] rgb = this.robot.getSensors().getColorArray();
+	//	for (int i = 0; i < rgb.length; i++) {
+	//		rgb[i] *= 255;
+	//	}
+	//	return rgb;
+	//}
 
 	public void reset() {
 		this.beginLabyrinth = false;
@@ -134,7 +141,8 @@ public class Labyrinth {
 	public void fromLabyrinthToBridge() {
 		
 		// TODO: add touch sensor determination
-		this.robot.getDrive().travel(2);
+		this.robot.getDrive().turnRight(8);
+		this.robot.getDrive().travel(10);
 	}
 
 	public Robot getRobot() {

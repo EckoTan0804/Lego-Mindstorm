@@ -54,6 +54,9 @@ public class MissionMenu extends TextMenu {
 				
 				labyrinth.reset();
 				labyrinth.startLabyrinth();
+				labyrinth.fromLabyrinthToBridge();
+				bridge.startBridge();
+				colorSearch.startColorSearch();
 				break;
 
 			case MissionMenu.MENU_ITEM_OBSTACLE_SHIFTING:
@@ -77,7 +80,7 @@ public class MissionMenu extends TextMenu {
 				/* bridge routine will be executed. */
 				
 				bridge.startBridge();
-				
+				colorSearch.startColorSearch();
 				
 				break;
 				
@@ -93,12 +96,11 @@ public class MissionMenu extends TextMenu {
 				labyrinth.fromLabyrinthToBridge();
 				bridge.startBridge();
 				colorSearch.startColorSearch();
-				
+
 				break;
-				
 
 			default:
-				
+				break;
 			}
 
 			Thread.sleep(20);
