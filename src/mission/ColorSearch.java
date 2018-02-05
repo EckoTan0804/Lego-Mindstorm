@@ -80,16 +80,18 @@ public class ColorSearch {
 				if (!found) {
 					this.robot.getDrive().stopWithMotors();
 					Sound.setVolume(70);
-					Sound.beepSequenceUp();;
+					Sound.beepSequenceUp();
 					this.robot.getDrive().goForwardWithMotors();
 					this.r = red;
 					this.g = green;
 					this.b = blue;
 					found = true;
 				} else {
-					diff = Math.abs(red - r) + Math.abs(blue - b) 
+					diff = Math.abs(red - r) + Math.abs(blue - b)
 							+ Math.abs(green - g);
 					if (diff > EPS) {
+						Sound.setVolume(70);
+						Sound.beepSequenceUp();
 						this.robot.getDrive().stopWithMotors();
 						break;
 					}
@@ -111,8 +113,8 @@ public class ColorSearch {
 	public void turn() {
 			this.robot.getDrive().travel(-disF);
 			this.robot.getDrive().rotate(turnL * 105);
-			this.robot.getDrive().travel(1.5 * disF);
-			this.robot.getDrive().rotate(turnL * 98);
+			this.robot.getDrive().travel(1.2 * disF);
+			this.robot.getDrive().rotate(turnL * 99);
 			this.robot.getDrive().goForwardWithMotors();
 			turnL = - turnL;
 	}

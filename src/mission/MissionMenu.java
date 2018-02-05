@@ -99,7 +99,7 @@ public class MissionMenu extends TextMenu {
 				break;
 
 			default:
-				
+				break;
 			}
 
 			Thread.sleep(20);

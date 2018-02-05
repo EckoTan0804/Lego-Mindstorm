@@ -36,7 +36,7 @@ public class LineFollower {
 	 * Target power level, power level of both motors when the robot is supposed to
 	 * go straight ahead, controls how fast the robot is moving along the line
 	 */
-	private final float Tp = 250f;
+	private final float Tp = 220f;
 
 	/*
 	 * the constant for the Proportional controller, controls how fast the
@@ -123,7 +123,7 @@ public class LineFollower {
 						this.robot.getDrive().turnLeft(arc + 10);
 						findLine();
 					}
-
+ 
 				} else { /* normal case */
 
 					/* calculate turn, based on the sample value */
@@ -204,7 +204,7 @@ public class LineFollower {
 		
 		this.robot.getDrive().travel(-3);
 		this.robot.getDrive().turnRight(90);
-		this.robot.getDrive().travel(25);
+		this.robot.getDrive().travel(26);
 		this.robot.getDrive().turnLeft(90);
 		this.robot.getDrive().travel(36);
 		this.robot.getDrive().turnLeft(90);
@@ -229,8 +229,8 @@ public class LineFollower {
 				arc += 10;
 			}
 			if (!found)
-				 this.robot.getDrive().turnLeft(arc + 1);
-				//this.robot.getDrive().turnLeft(arc);
+				 //this.robot.getDrive().turnLeft(arc + 1);
+				this.robot.getDrive().turnLeft(arc);
 		}
 	}
 

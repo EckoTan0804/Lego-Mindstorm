@@ -141,7 +141,7 @@ public class Labyrinth {
 	public void fromLabyrinthToBridge() {
 		
 		// TODO: add touch sensor determination
-		this.robot.getDrive().turnRight(3);
+		this.robot.getDrive().turnRight(8);
 		this.robot.getDrive().travel(10);
 	}
 
