@@ -94,6 +94,8 @@ public class MissionMenu extends TextMenu {
 				bridge.startBridge();
 				colorSearch.startColorSearch();
 				
+				break;
+				
 
 			default:
 				
