@@ -1,4 +1,4 @@
-# Lego2017
+# Lego Mindstorm
 
 + Lego set: MINDSTORMS EV3
 + language: Java
